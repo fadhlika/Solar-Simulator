@@ -1,0 +1,69 @@
+html, body {
+    font-family: 'EB Garamond', sans-serif;
+    height: 96%;
+    width: 99%;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 55px;
+    height: 99%;
+    width: 99%;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    background: whitesmoke;
+    box-shadow: 0px 2px 2px lightgray;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 3px;
+}
+
+.chart-row {
+    width: 570px;
+}
+
+.chart {
+    background: white;
+    min-height: 30.65%;
+    min-width: 415px;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    box-shadow: 2px 2px 2px lightgray;
+    margin: 5px;
+    padding: 12px;
+}
+
+.data-container {
+    background: white;
+    height: 99.8%;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    box-shadow: 2px 2px 2px lightgray;
+    overflow-y: scroll;
+    padding: 8px;
+    margin: 5px;
+}
+
+.data-table {
+    border-collapse: collapse;
+}
+
+td, th {
+    text-align: center;
+    padding: 8px;
+    border-bottom: 1px solid #dddddd;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
