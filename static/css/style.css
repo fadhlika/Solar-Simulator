@@ -1,6 +1,6 @@
 html, body {
     font-family: 'EB Garamond', sans-serif;
-    height: 96%;
+    height: 95%;
     width: 99%;
 }
 
@@ -29,13 +29,15 @@ h1 {
 }
 
 .chart-row {
-    width: 570px;
+    width: 40%;
+    max-height: 99%;
+    overflow-y: auto;
 }
 
 .chart {
     background: white;
-    min-height: 30.65%;
-    min-width: 415px;
+    height: 40%;
+    width: 90%;
     border: 1px solid lightgray;
     border-radius: 2px;
     box-shadow: 2px 2px 2px lightgray;
@@ -43,19 +45,26 @@ h1 {
     padding: 12px;
 }
 
+.table-row {
+    height: 99.8%;
+    max-width: 53%
+}
+
 .data-container {
     background: white;
-    height: 99.8%;
+    height: 45.4%;
+    width: 100%;
     border: 1px solid lightgray;
     border-radius: 2px;
     box-shadow: 2px 2px 2px lightgray;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 8px;
     margin: 5px;
 }
 
 .data-table {
     border-collapse: collapse;
+    width: 100%;
 }
 
 td, th {

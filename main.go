@@ -15,10 +15,6 @@ import (
 
 	"os"
 
-	"net"
-
-	"strings"
-
 	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/xuri/excelize"
@@ -32,7 +28,9 @@ var upgrader = websocket.Upgrader{
 }
 
 var clients = make(map[*websocket.Conn]bool)
+var debugclients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan solardata)
+var debugchannel = make(chan []byte)
 
 var db *sql.DB
 
@@ -45,6 +43,12 @@ type solardata struct {
 	Temp2   float64   `json:"temp2"`
 	Lum1    float64   `json:"lum1"`
 	Lum2    float64   `json:"lum2"`
+}
+
+type solardebug struct {
+	ID      int
+	Created time.Time
+	Message string
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string) {
@@ -80,6 +84,7 @@ func getHandler(w http.ResponseWriter) {
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
 	//Get json data from POST request body and decode to solardata struct
+	log.Println(r.Body)
 	b, err := ioutil.ReadAll(r.Body)
 	checkErr(err)
 	fmt.Println(string(b))
@@ -93,6 +98,28 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	sendWS(data)
 }
 
+func debugHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		datas := dbDebugQuery("select * from solar_debug order by created desc")
+		fmt.Println(datas)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(datas)
+	case "POST":
+		//Get json data from POST request body and decode to solardata struct
+		log.Println(r.Body)
+		b, err := ioutil.ReadAll(r.Body)
+		checkErr(err)
+		fmt.Println(string(b))
+
+		data := dbDebugInsert(string(b))
+		sendDebugWS(data)
+	case "PUT":
+
+	case "DELETE":
+	}
+}
+
 func dialWs() *websocket.Conn {
 	conn, _, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:8000/ws", nil)
 	if err != nil {
@@ -101,8 +128,24 @@ func dialWs() *websocket.Conn {
 	return conn
 }
 
+func dialDebugWs() *websocket.Conn {
+	conn, _, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:8000/wsd", nil)
+	if err != nil {
+		log.Println("write: ", err)
+	}
+	return conn
+}
+
 func sendWS(s solardata) {
 	conn := dialWs()
+	err := conn.WriteJSON(s)
+	if err != nil {
+		log.Println("write: ", err)
+	}
+}
+
+func sendDebugWS(s solardebug) {
+	conn := dialDebugWs()
 	err := conn.WriteJSON(s)
 	if err != nil {
 		log.Println("write: ", err)
@@ -119,6 +162,9 @@ func dbInit() {
 		temp2   float,
 		lum1    float,
 		lum2    float);
+	create table solar_debug (id integer primary key, 
+		created datetime, 
+		message text);
 	`
 	_, err := db.Exec(sqlStmt)
 	checkErr(err)
@@ -141,7 +187,7 @@ func dbInsert(s solardata) solardata {
 	}
 	tx.Commit()
 
-	rows, err := db.Query("select * from solar_data order by id desc limit 1")
+	rows, err := db.Query("select * from solar_data order by created desc limit 1")
 	checkErr(err)
 	defer rows.Close()
 
@@ -161,6 +207,43 @@ func dbInsert(s solardata) solardata {
 		}
 		data = solardata{
 			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2,
+		}
+	}
+	return data
+}
+
+func dbDebugInsert(s string) solardebug {
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stmt, err := db.Prepare("insert into solar_debug(created, message) values(?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = tx.Stmt(stmt).Exec(time.Now(), s)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tx.Commit()
+
+	rows, err := db.Query("select * from solar_debug order by created desc limit 1")
+	checkErr(err)
+	defer rows.Close()
+
+	var data solardebug
+	if rows.Next() {
+		var id int
+		var Date time.Time
+		var Message string
+		err = rows.Scan(&id, &Date, &Message)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data = solardebug{
+			id, Date, Message,
 		}
 	}
 	return data
@@ -199,9 +282,36 @@ func dbQuery(query string) map[int]solardata {
 	return datas
 }
 
+func dbDebugQuery(query string) map[int]solardebug {
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	datas := make(map[int]solardebug)
+	for rows.Next() {
+		var id int
+		var Date time.Time
+		var Message string
+		err = rows.Scan(&id, &Date, &Message)
+		if err != nil {
+			log.Fatal(err)
+		}
+		datas[id] = solardebug{
+			id, Date, Message,
+		}
+		fmt.Println(datas[id])
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return datas
+}
+
 func checkErr(err error) {
 	if err != nil {
-		log.Println(err)
+		log.Panicln(err)
 	}
 }
 
@@ -234,6 +344,39 @@ func handleMessages() {
 				log.Printf("error: %v", err)
 				client.Close()
 				delete(clients, client)
+			}
+		}
+	}
+}
+
+func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ws.Close()
+
+	debugclients[ws] = true
+	for {
+		_, m, err := ws.ReadMessage()
+		if err != nil {
+			log.Printf("error: %v", err)
+			delete(debugclients, ws)
+			break
+		}
+		debugchannel <- m
+	}
+}
+
+func handleDebugMessages() {
+	for {
+		m := <-debugchannel
+		for client := range debugclients {
+			err := client.WriteMessage(websocket.TextMessage, m)
+			if err != nil {
+				log.Printf("error: %v", err)
+				client.Close()
+				delete(debugclients, client)
 			}
 		}
 	}
@@ -300,7 +443,7 @@ func main() {
 	log.Println("starting application")
 	log.Println("Opening database")
 	var err error
-	db, err = sql.Open("sqlite3", "./solar-simulator.db?cache=shared&loc=auto")
+	db, err = sql.Open("sqlite3", "./solar-simulator.db?loc=auto")
 	checkErr(err)
 	defer db.Close()
 	log.Println("Database opened")
@@ -312,20 +455,24 @@ func main() {
 
 	log.Println("Starting websocket message handler")
 	go handleMessages()
+	go handleDebugMessages()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/data", dataHandler)
+	http.HandleFunc("/debug", debugHandler)
 	http.HandleFunc("/export", exportHandler)
 	http.HandleFunc("/ws", handleConnections)
+	http.HandleFunc("/wsd", handleDebugConnections)
+	/*
+		conn, err := net.Dial("tcp", "8.8.8.8:80")
+		checkErr(err)
+		defer conn.Close()
 
-	conn, err := net.Dial("tcp", "8.8.8.8:80")
-	checkErr(err)
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().String()
-	log.Printf("Application started in http://%s:8000", strings.Split(localAddr, ":")[0])
-
-	log.Println("Application started in http://127.0.0.1:8000")
-	http.ListenAndServe(":8000", nil)
+		localAddr := conn.LocalAddr().String()
+		log.Printf("Application started in http://%s:8000", strings.Split(localAddr, ":")[0])
+	*/
+	port := os.Getenv("PORT")
+	log.Println("Application started in http://127.0.0.1:" + port)
+	http.ListenAndServe(":"+port, nil)
 }

@@ -27,14 +27,6 @@ $(document).ready(function(){
                         beginAtZero:true
                     }
                 }]
-            },
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 15
-                }
             }
         }
     });
@@ -66,14 +58,6 @@ $(document).ready(function(){
                         beginAtZero:true
                     }
                 }]
-            },
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 15
-                }
             }
         }
     });
@@ -105,14 +89,6 @@ $(document).ready(function(){
                         beginAtZero:true
                     }
                 }]
-            },
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 15
-                }
             }
         }
     });
@@ -192,6 +168,7 @@ $(document).ready(function(){
             } 
         }
     }
+
     var sock = null;
     var wsuri = "ws://127.0.0.1:8000/ws"
 
@@ -206,6 +183,7 @@ $(document).ready(function(){
 
     sock.onmessage = function(e) {        
         var msg = JSON.parse(e.data)
+        console.log(msg);
         updateData(msg);
     }
 
@@ -213,5 +191,54 @@ $(document).ready(function(){
         updateData(data);
     })
 
+    var debugtable = document.getElementById("solardebug-table");
+
+    function updateDebugData(datas) {
+        for (var data in datas) {
+            var d = data;
+            if (typeof datas[data] == 'object') {
+                data = datas[data]
+            } else {
+                data = datas;
+            }
+            console.log(data);
+
+            var row = debugtable.insertRow(1);
+
+            var c = new Date(data.Created)
+            var cCell = row.insertCell(0);
+            cCell.innerHTML = c.getDate() + "/" + c.getUTCMonth() + "/" + c.getFullYear() + 
+                " " + c.getHours() + ":" + c.getMinutes();
+            
+            var message = data.Message;
+            var mCell = row.insertCell(1);
+            mCell.innerHTML = message;
+
+            if (typeof datas[d] != 'object') {
+                return
+            } 
+        }
+    }
+    var sockd = null;
+    var wsurid = "ws://127.0.0.1:8000/wsd"
+
+    sockd = new WebSocket(wsurid);
+    sockd.onopen = function() {
+        console.log("connected to " + wsurid);
+    }
+
+    sockd.onclose = function(e) {
+        console.log("connection closed (" + e.code + ")");
+    }
+
+    sockd.onmessage = function(e) {        
+        var msg = JSON.parse(e.data)
+        console.log(e.data);
+        updateDebugData(msg)
+    }
+
+    $.getJSON('debug', function(data) {
+        updateDebugData(data);
+    })
 });
 

@@ -7,18 +7,28 @@
     <div class="chart"><canvas id="lumChart"></canvas></div>
     <div class="chart"><canvas id="voltageChart"></canvas></div>
 </div>
-<div class="data-container">
-    <table class="data-table" id="solardata-table">
-        <tr>
-            <th>Date</th>
-            <th>Voltage</th> 
-            <th>Current</th>
-            <th>Temperature 1</th>
-            <th>Temperature 2</th> 
-            <th>Luminance 1</th>
-            <th>Luminance 2</th>
-        </tr>
-    </table>
-</div>
+    <div class="table-row">
+        <div class="data-container">
+            <table class="data-table" id="solardata-table">
+                <tr>
+                    <th>Date</th>
+                    <th>Voltage</th> 
+                    <th>Current</th>
+                    <th>Temp 1</th>
+                    <th>Temp 2</th> 
+                    <th>Lum 1</th>
+                    <th>Lum 2</th>
+                </tr>
+            </table>
+        </div>
+        <div class="data-container">
+            <table class="data-table" id="solardebug-table">
+                <tr>
+                    <th>Date</th>
+                    <th>Message</th>
+                </tr>
+            </table>
+        </div>
+    </div>
     </main>
 </body>
