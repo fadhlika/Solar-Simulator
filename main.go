@@ -472,7 +472,7 @@ func main() {
 		localAddr := conn.LocalAddr().String()
 		log.Printf("Application started in http://%s:8000", strings.Split(localAddr, ":")[0])
 	*/
-	port := os.Getenv("PORT")
-	log.Println("Application started in http://127.0.0.1:" + port)
-	http.ListenAndServe(":"+port, nil)
+
+	log.Println("Application started in http://127.0.0.1:8000")
+	http.ListenAndServe(":8000", nil)
 }

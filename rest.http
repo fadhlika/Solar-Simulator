@@ -1,4 +1,4 @@
-POST http://127.0.0.1:8000/data
+POST https://solar-sim.herokuapp.com/data
 
 {
     "created": "2017-09-14T0:00:00+07:00",
@@ -14,4 +14,4 @@ POST http://127.0.0.1:8000/debug
 
 coba deui
 ###
-GET http://127.0.0.1:8000/data
+GET https://solar-sim.herokuapp.com/data
