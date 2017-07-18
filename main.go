@@ -457,7 +457,7 @@ func main() {
 	go handleMessages()
 	go handleDebugMessages()
 
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
+	http.Handle("/solar-sim/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/solar-sim", indexHandler)
 	http.HandleFunc("/solar-sim/data", dataHandler)
 	http.HandleFunc("/solar-sin/debug", debugHandler)
