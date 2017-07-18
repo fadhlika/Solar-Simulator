@@ -458,12 +458,12 @@ func main() {
 	go handleDebugMessages()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/data", dataHandler)
-	http.HandleFunc("/debug", debugHandler)
-	http.HandleFunc("/export", exportHandler)
-	http.HandleFunc("/ws", handleConnections)
-	http.HandleFunc("/wsd", handleDebugConnections)
+	http.HandleFunc("/solar-sim", indexHandler)
+	http.HandleFunc("/solar-sim/data", dataHandler)
+	http.HandleFunc("/solar-sin/debug", debugHandler)
+	http.HandleFunc("/solar-sim/export", exportHandler)
+	http.HandleFunc("/solar-sim/ws", handleConnections)
+	http.HandleFunc("/solar-sim/wsd", handleDebugConnections)
 	/*
 		conn, err := net.Dial("tcp", "8.8.8.8:80")
 		checkErr(err)
