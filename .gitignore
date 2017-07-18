@@ -16,3 +16,5 @@
 *.db
 *.xlsx
 .vscode
+
+vendor/
