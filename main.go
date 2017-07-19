@@ -79,7 +79,8 @@ func getHandler(w http.ResponseWriter) {
 	datas := dbQuery("select * from solar_data order by created desc")
 	fmt.Println(datas)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(datas)
+	p, _ := json.Marshal(datas)
+	w.Write(p)
 }
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +105,8 @@ func debugHandler(w http.ResponseWriter, r *http.Request) {
 		datas := dbDebugQuery("select * from solar_debug order by created desc")
 		fmt.Println(datas)
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(datas)
+		p, _ := json.Marshal(datas)
+		w.Write(p)
 	case "POST":
 		//Get json data from POST request body and decode to solardata struct
 		log.Println(r.Body)
