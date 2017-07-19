@@ -78,11 +78,8 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 func getHandler(w http.ResponseWriter) {
 	datas := dbQuery("select * from solar_data order by created desc")
 	fmt.Println(datas)
-	w.Header().Set("Content-Type", "application/json")
 	p, _ := json.Marshal(datas)
-	code, err := w.Write(p)
-	fmt.Printf("Code: %i", code)
-	checkErr(err)
+	w.Write(p)
 }
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
