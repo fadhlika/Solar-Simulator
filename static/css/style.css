@@ -12,6 +12,18 @@ main {
     width: 99%;
 }
 
+@media only screen 
+and (orientation: portrait) {
+main {
+	height: 99%;
+	width: 99%;	
+}
+
+.chart-row  {
+	width: 99%;
+}
+}
+
 h1 {
     font-size: 16px;
 }
@@ -19,6 +31,7 @@ h1 {
 .topbar {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background: whitesmoke;
     box-shadow: 0px 2px 2px lightgray;
     position: fixed;
