@@ -80,7 +80,9 @@ func getHandler(w http.ResponseWriter) {
 	fmt.Println(datas)
 	w.Header().Set("Content-Type", "application/json")
 	p, _ := json.Marshal(datas)
-	w.Write(p)
+	code, err := w.Write(p)
+	fmt.Printf("Code: %i", code)
+	checkErr(err)
 }
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
