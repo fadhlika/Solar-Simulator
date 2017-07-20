@@ -1,4 +1,4 @@
-POST http://128.199.162.40:80/data
+saPOST http://128.199.162.40:80/data
 
 {"voltage": 4.3,"current": 2.1,"temp1": 16,"temp2": 32,"lum1": 90.2,"lum2": 23.4}
 ###

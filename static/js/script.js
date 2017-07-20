@@ -109,8 +109,7 @@ $(document).ready(function(){
 
             var c = new Date(data.created)
             var cCell = row.insertCell(0);
-            cCell.innerHTML = c.getDate() + "/" + c.getUTCMonth() + "/" + c.getFullYear() + 
-                " " + c.getHours() + ":" + c.getMinutes();
+            cCell.innerHTML = c.toLocaleString();
             
             var voltage = data.voltage;
             voltageChart.data.datasets[0].data.push({
@@ -207,8 +206,7 @@ $(document).ready(function(){
 
             var c = new Date(data.Created)
             var cCell = row.insertCell(0);
-            cCell.innerHTML = c.getDate() + "/" + c.getUTCMonth() + "/" + c.getFullYear() + 
-                " " + c.getHours() + ":" + c.getMinutes();
+            cCell.innerHTML = c.toLocaleString();
             
             var message = data.Message;
             var mCell = row.insertCell(1);
