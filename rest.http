@@ -1,16 +1,9 @@
-POST http://128.199.162.40/data
+POST http://128.199.162.40:80/data
 
-{
-    "voltage": 4.3,
-    "current": 2.1,
-    "temp1": 16,
-    "temp2": 32,
-    "lum1": 90.2,
-    "lum2": 23.4
-}
+{"voltage": 4.3,"current": 2.1,"temp1": 16,"temp2": 32,"lum1": 90.2,"lum2": 23.4}
 ###
 POST http://128.199.162.40/debug
 
 coba deui
 ###
-GET http://128.199.165.32:8000/data
+GET http://128.199.162.40/data
