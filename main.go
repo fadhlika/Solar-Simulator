@@ -25,6 +25,9 @@ var templates = template.Must(template.ParseFiles("template/head.html", "templat
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 var clients = make(map[*websocket.Conn]bool)
