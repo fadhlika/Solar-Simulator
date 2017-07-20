@@ -16,7 +16,7 @@
 *.db
 *.xlsx
 .vscode
+*.http
 
 vendor/
-rest.http
 Solar-Simulator
