@@ -183,7 +183,7 @@ func dbInsert(s solardata) solardata {
 		log.Fatal(err)
 	}
 
-	_, err = tx.Stmt(stmt).Exec(s.Created, s.Voltage, s.Current, s.Temp1, s.Temp2, s.Lum1, s.Lum2)
+	_, err = tx.Stmt(stmt).Exec(time.Now(), s.Voltage, s.Current, s.Temp1, s.Temp2, s.Lum1, s.Lum2)
 	if err != nil {
 		log.Fatal(err)
 	}
