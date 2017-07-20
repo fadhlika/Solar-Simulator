@@ -126,7 +126,7 @@ $(document).ready(function(){
                     y: current
             });
             voltageChart.update();
-            var curCell = row.insertCell(1);
+            var curCell = row.insertCell(2);
             curCell.innerHTML = current;
 
             var temp1 = data.temp1;
@@ -134,7 +134,7 @@ $(document).ready(function(){
                     x: c,
                     y: temp1
             });
-            var t1Cell = row.insertCell(2)
+            var t1Cell = row.insertCell(3)
             t1Cell.innerHTML = temp1;
 
             var temp2 = data.temp2;
@@ -143,7 +143,7 @@ $(document).ready(function(){
                     y: temp2
             });    
             tempChart.update();
-            var t2Cell = row.insertCell(3);
+            var t2Cell = row.insertCell(4);
             t2Cell.innerHTML = temp2;
 
             var lum1 = data.lum1;
@@ -151,7 +151,7 @@ $(document).ready(function(){
                     x: c,
                     y: lum1
             });
-            var l1Cell = row.insertCell(4);
+            var l1Cell = row.insertCell(5);
             l1Cell.innerHTML = lum1;
             
             var lum2 = data.lum2;
@@ -160,7 +160,7 @@ $(document).ready(function(){
                     y: lum2
             });
             lumChart.update();
-            var l2Cell = row.insertCell(5);
+            var l2Cell = row.insertCell(6);
             l2Cell.innerHTML = lum2;
 
             if (typeof datas[d] != 'object') {
