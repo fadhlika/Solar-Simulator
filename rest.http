@@ -10,7 +10,7 @@ POST http://127.0.0.1:8000/data
     "lum2": 23.4
 }
 ###
-GET http://167.205.43.239:8000/data
+POST http://128.199.162.40:8000/debug
 
 coba deui
 ###

@@ -170,7 +170,7 @@ $(document).ready(function(){
     }
 
     var sock = null;
-    var wsuri = "ws://167.205.43.239:8000/ws"
+    var wsuri = "ws://128.199.162.40:8000/ws"
 
     sock = new WebSocket(wsuri);
     sock.onopen = function() {
@@ -220,7 +220,7 @@ $(document).ready(function(){
         }
     }
     var sockd = null;
-    var wsurid = "ws://167.205.43.239:8000/wsd"
+    var wsurid = "ws://128.199.162.40:8000/wsd"
 
     sockd = new WebSocket(wsurid);
     sockd.onopen = function() {
