@@ -15,8 +15,8 @@ import (
 
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/websocket"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/xuri/excelize"
 )
 
@@ -444,7 +444,7 @@ func main() {
 	log.Println("starting application")
 	log.Println("Opening database")
 	var err error
-	db, err = sql.Open("sqlite3", "./solar-simulator.db?loc=auto")
+	db, err = sql.Open("mysql", "root:saxifrage@/solar_simulator?parseTime=true&loc=Asia%2FJakarta")
 	checkErr(err)
 	defer db.Close()
 	log.Println("Database opened")
