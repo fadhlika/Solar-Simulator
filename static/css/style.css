@@ -28,6 +28,37 @@ h1 {
     font-size: 16px;
 }
 
+span#icon-label {
+    margin-left: 10px;
+}
+
+.icon a span {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+}
+
+.icon#download{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+    width: 125px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.icon#download:hover {
+    background-color: rgba(150, 150, 150, .7);
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px;
+}
+
 .topbar {
     display: flex;
     align-items: center;
@@ -57,7 +88,7 @@ h1 {
     flex-grow: 1;
 }
 
-.data-container#data {
+.data-container, .login-container {
     background: white;
     flex-grow: 2;
     border: 1px solid lightgray;
@@ -65,17 +96,14 @@ h1 {
     box-shadow: 2px 2px 2px lightgray;
     overflow-y: auto;
     margin: 5px;
-    
+}
+
+.data-container#data {
+    flex-grow: 2;
 }
 
 .data-container#debug {
-    background: white;
     flex-grow: 1;
-    border: 1px solid lightgray;
-    border-radius: 2px;
-    box-shadow: 2px 2px 2px lightgray;
-    overflow-y: auto;
-    margin: 5px;
 }
 
 .data-table {
@@ -91,4 +119,42 @@ td, th {
 
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+
+.login-container {
+    margin: auto auto;
+    width: 400px;
+    height: 500px
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    width: 350px;
+    margin: auto;
+}
+
+label {
+    font-size: 20px;
+}
+
+input[type="submit"] {
+    background-color: whitesmoke;    
+    border: none;
+    border-radius: 5px;
+    box-shadow: 2px 2px 0px lightgray;
+    width: 100px;
+    height: 40px;
+}
+
+input[type="password"], input[type="email"] {
+    height: 25px;
+    border: none;
+    border-bottom: 2px solid lightslategray;
+}
+
+input[type="password"]:focus, input[type="email"]:focus {
+    border-bottom: 2px solid lightblue;
 }

@@ -1,8 +1,14 @@
 package main
 
+import (
+	"fmt"
+	"log"
+	"time"
+)
+
 func dbInit() {
 	sqlStmt := `
-	create table solar_data (id integer primary key, 
+	create table solar_data (id integer primary key auto_increment, 
 		created datetime, 
 		voltage float,
 		current float,
@@ -10,7 +16,7 @@ func dbInit() {
 		temp2   float,
 		lum1    float,
 		lum2    float);
-	create table solar_debug (id integer primary key, 
+	create table solar_debug (id integer primary key auto_increment, 
 		created datetime, 
 		message text);
 	`

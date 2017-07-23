@@ -20,7 +20,10 @@ import (
 	"github.com/xuri/excelize"
 )
 
-var templates = template.Must(template.ParseFiles("template/head.html", "template/topbar.html", "template/index.html"))
+var templates = template.Must(template.ParseFiles(
+	"template/head.html",
+	"template/topbar.html",
+	"template/index.html"))
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -122,6 +125,13 @@ func debugHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+
+	}
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Panicln(err)
@@ -205,6 +215,7 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/data", dataHandler)
 	http.HandleFunc("/debug", debugHandler)
 	http.HandleFunc("/export", exportHandler)
