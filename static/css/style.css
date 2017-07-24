@@ -98,6 +98,10 @@ span#icon-label {
     margin: 5px;
 }
 
+.data-container {
+    height: 100%;
+}
+
 .data-container#data {
     flex-grow: 2;
 }
