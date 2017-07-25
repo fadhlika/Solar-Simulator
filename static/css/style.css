@@ -77,7 +77,7 @@ span#icon-label {
     border: 1px solid lightgray;
     border-radius: 2px;
     box-shadow: 2px 2px 2px lightgray;
-    margin: 5px;
+    margin: 4px 5px 0px 5px;
     flex-grow: 1;
 }
 
