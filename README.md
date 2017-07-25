@@ -1,4 +1,4 @@
-[SolarSimulator](#Solar Simulator)
+#Solar Simulator
 Web data acquisition for solar simulator device
 
 ![alt text](screenshot.png)
