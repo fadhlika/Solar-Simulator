@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'EB Garamond', sans-serif;
+    font-family: 'Quicksand', sans-serif;
     height: 95%;
     width: 99%;
 }
@@ -32,6 +32,10 @@ span#icon-label {
     margin-left: 10px;
 }
 
+.icon-bar {
+    display: flex;
+}
+
 .icon a span {
     position: absolute;
     height: 100%;
@@ -41,7 +45,7 @@ span#icon-label {
     left: 0;
 }
 
-.icon#download{
+.icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,19 +55,18 @@ span#icon-label {
     position: relative;
 }
 
-.icon#download:hover {
+.icon:hover {
     background-color: rgba(150, 150, 150, .7);
     color: white;
     cursor: pointer;
     border-radius: 4px;
-    padding: 5px;
 }
 
 .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: whitesmoke;
+    background: lightskyblue;
     box-shadow: 0px 2px 2px lightgray;
     position: fixed;
     width: 100%;
@@ -76,7 +79,7 @@ span#icon-label {
 .chart-row {
     display: flex;
     flex-direction: column;
-    min-width: 30%
+    min-width: 30%;
 }
 
 .chart {
