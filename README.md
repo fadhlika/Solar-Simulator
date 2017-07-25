@@ -5,5 +5,5 @@
 
 [Library](#Library)
 * github.com/gorilla/websocket
-* github.com/mattn/go-sqlite3
+* github.com/go-sql-driver/mysql
 * github.com/xuri/excelize
