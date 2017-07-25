@@ -3,15 +3,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
-                backgroundColor: window.chartColors.red,
-                borderColor: window.chartColors.red,
+                backgroundColor: rgb(66, 134, 244),
+                borderColor: rgb(66, 134, 244),
                 label: 'Temperature1',
                 data: [],
                 fill: false
             },
             {
-                backgroundColor: window.chartColors.blue,
-                borderColor: window.chartColors.blue,
+                backgroundColor: rgb(244, 146, 65),
+                borderColor: rgb(244, 146, 65),
                 label: 'Temperature2',
                 data: [],
                 fill: false
@@ -38,15 +38,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
-                backgroundColor: window.chartColors.green,
-                borderColor: window.chartColors.green,
+                backgroundColor: rgb(65, 244, 65),
+                borderColor: rgb(65, 244, 65),
                 label: 'Luminance1',
                 data: [],
                 fill: false
             },
             {
-                backgroundColor: window.chartColors.orange,
-                borderColor: window.chartColors.orange,
+                backgroundColor: rgb(244, 67, 65),
+                borderColor: rgb(244, 67, 65),
                 label: 'Luminance2',
                 data: [],
                 fill: false
@@ -73,15 +73,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
-                backgroundColor: window.chartColors.violet,
-                borderColor: window.chartColors.violet,
+                backgroundColor: rgb(65, 223, 244),
+                borderColor: rgb(65, 223, 244),
                 label: 'Voltage',
                 data: [],
                 fill: false
             },
             {
-                backgroundColor: window.chartColors.brown,
-                borderColor: window.chartColors.brown,
+                backgroundColor: rgb(175, 65, 244),
+                borderColor: rgb(175, 65, 244),
                 label: 'Current',
                 data: [],
                 fill: false
