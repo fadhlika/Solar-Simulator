@@ -3,11 +3,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                backgroundColor: window.chartColors.red,
+                borderColor: window.chartColors.red,
                 label: 'Temperature1',
                 data: [],
                 fill: false
             },
             {
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
                 label: 'Temperature2',
                 data: [],
                 fill: false
@@ -34,11 +38,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                backgroundColor: window.chartColors.green,
+                borderColor: window.chartColors.green,
                 label: 'Luminance1',
                 data: [],
                 fill: false
             },
             {
+                backgroundColor: window.chartColors.orange,
+                borderColor: window.chartColors.orange,
                 label: 'Luminance2',
                 data: [],
                 fill: false
@@ -65,11 +73,15 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                backgroundColor: window.chartColors.violet,
+                borderColor: window.chartColors.violet,
                 label: 'Voltage',
                 data: [],
                 fill: false
             },
             {
+                backgroundColor: window.chartColors.brown,
+                borderColor: window.chartColors.brown,
                 label: 'Current',
                 data: [],
                 fill: false
