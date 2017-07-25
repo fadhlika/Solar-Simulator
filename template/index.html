@@ -1,59 +1,60 @@
 {{template "head"}}
 <body>
     {{template "topbar" }}
-    <main>
-<div class="chart-row">
-    <div class="chart"><canvas id="tempChart"></canvas></div>
-    <div class="chart"><canvas id="lumChart"></canvas></div>
-    <div class="chart"><canvas id="voltageChart"></canvas></div>
-</div>
-<div class="data-container" id="data">
-    <table class="data-table" id="solardata-table">
-        <tr>
-            <th>
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                <span>Date</span>
-            </th>
-            <th>
-                <i class="fa fa-bolt" aria-hidden="true"></i>
-                <span>Voltage</span>
-            </th> 
-            <th>
-                <i class="fa fa-bolt" aria-hidden="true"></i>
-                <span>Current</span>
-            </th>
-            <th>
-                <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
-                <span>Temp 1</span>
-            </th>
-            <th>
-                <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
-                <span>Temp 2</span>    
-            </th> 
-            <th>
-                <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                <span>Lum 1</span>
-            </th>
-            <th>
-                <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                <span>Lum 2</span>
-            </th>
-        </tr>
-    </table>
-</div>
-<div class="data-container" id="debug">
-    <table class="data-table" id="solardebug-table">
-        <tr>
-            <th>
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                <span>Date</span>
-            </th>
-            <th>
-                <i class="fa fa-file-text" aria-hidden="true"></i>
-                <span>Message</span>
-            </th>
-        </tr>
-    </table>
-</div>
+    <div id="loader"></div>
+    <main id="main">
+        <div class="chart-row">
+            <div class="chart"><canvas id="tempChart"></canvas></div>
+            <div class="chart"><canvas id="lumChart"></canvas></div>
+            <div class="chart"><canvas id="voltageChart"></canvas></div>
+        </div>
+        <div class="data-container" id="data">
+            <table class="data-table" id="solardata-table">
+                <tr>
+                    <th>
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        <span>Date</span>
+                    </th>
+                    <th>
+                        <i class="fa fa-bolt" aria-hidden="true"></i>
+                        <span>Voltage</span>
+                    </th> 
+                    <th>
+                        <i class="fa fa-bolt" aria-hidden="true"></i>
+                        <span>Current</span>
+                    </th>
+                    <th>
+                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
+                        <span>Temp 1</span>
+                    </th>
+                    <th>
+                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
+                        <span>Temp 2</span>    
+                    </th> 
+                    <th>
+                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        <span>Lum 1</span>
+                    </th>
+                    <th>
+                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        <span>Lum 2</span>
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="data-container" id="debug">
+            <table class="data-table" id="solardebug-table">
+                <tr>
+                    <th>
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        <span>Date</span>
+                    </th>
+                    <th>
+                        <i class="fa fa-file-text" aria-hidden="true"></i>
+                        <span>Message</span>
+                    </th>
+                </tr>
+            </table>
+        </div>
     </main>
 </body>

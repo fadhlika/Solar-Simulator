@@ -206,7 +206,13 @@ $(document).ready(function(){
 
     $.getJSON('data', function(data) {
         updateData(data);
+        showMain();
     })
+
+    function showMain() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("main").style.display = "flex";
+    }
 
     var debugtable = document.getElementById("solardebug-table");
 
