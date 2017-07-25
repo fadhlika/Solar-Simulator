@@ -4,16 +4,16 @@ $(document).ready(function(){
         data: {
             datasets: [{
                 pointRadius: 0,
-                backgroundColor: 'rgb(66, 134, 244)',
-                borderColor: 'rgb(66, 134, 244)',
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
                 label: 'Temperature1',
                 data: [],
                 fill: false
             },
             {
                 pointRadius: 0,
-                backgroundColor: 'rgb(244, 146, 65)',
-                borderColor: 'rgb(244, 146, 65)',
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
                 label: 'Temperature2',
                 data: [],
                 fill: false
@@ -41,16 +41,16 @@ $(document).ready(function(){
         data: {
             datasets: [{
                 pointRadius: 0,
-                backgroundColor: 'rgb(65, 244, 65)',
-                borderColor: 'rgb(65, 244, 65)',
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
                 label: 'Luminance1',
                 data: [],
                 fill: false
             },
             {
                 pointRadius: 0,
-                backgroundColor: 'rgb(244, 67, 65)',
-                borderColor: 'rgb(244, 67, 65)',
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
                 label: 'Luminance2',
                 data: [],
                 fill: false
@@ -78,16 +78,16 @@ $(document).ready(function(){
         data: {
             datasets: [{
                 pointRadius: 0,
-                backgroundColor: 'rgb(65, 223, 244)',
-                borderColor: 'rgb(65, 223, 244)',
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
                 label: 'Voltage',
                 data: [],
                 fill: false
             },
             {
                 pointRadius: 0,
-                backgroundColor: 'rgb(175, 65, 244)',
-                borderColor: 'rgb(175, 65, 244)',
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
                 label: 'Current',
                 data: [],
                 fill: false
