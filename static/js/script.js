@@ -3,6 +3,7 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                pointRadius: 0,
                 backgroundColor: 'rgb(66, 134, 244)',
                 borderColor: 'rgb(66, 134, 244)',
                 label: 'Temperature1',
@@ -10,6 +11,7 @@ $(document).ready(function(){
                 fill: false
             },
             {
+                pointRadius: 0,
                 backgroundColor: 'rgb(244, 146, 65)',
                 borderColor: 'rgb(244, 146, 65)',
                 label: 'Temperature2',
@@ -38,6 +40,7 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                pointRadius: 0,
                 backgroundColor: 'rgb(65, 244, 65)',
                 borderColor: 'rgb(65, 244, 65)',
                 label: 'Luminance1',
@@ -45,6 +48,7 @@ $(document).ready(function(){
                 fill: false
             },
             {
+                pointRadius: 0,
                 backgroundColor: 'rgb(244, 67, 65)',
                 borderColor: 'rgb(244, 67, 65)',
                 label: 'Luminance2',
@@ -73,6 +77,7 @@ $(document).ready(function(){
         type: 'line',
         data: {
             datasets: [{
+                pointRadius: 0,
                 backgroundColor: 'rgb(65, 223, 244)',
                 borderColor: 'rgb(65, 223, 244)',
                 label: 'Voltage',
@@ -80,6 +85,7 @@ $(document).ready(function(){
                 fill: false
             },
             {
+                pointRadius: 0,
                 backgroundColor: 'rgb(175, 65, 244)',
                 borderColor: 'rgb(175, 65, 244)',
                 label: 'Current',
