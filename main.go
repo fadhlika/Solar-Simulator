@@ -204,11 +204,6 @@ func main() {
 	defer db.Close()
 	log.Println("Database opened")
 
-	if _, err := os.Stat("./solar-simulator.db"); os.IsNotExist(err) {
-		dbInit()
-		log.Println("Initializing Database")
-	}
-
 	log.Println("Starting websocket message handler")
 	go handleMessages()
 	go handleDebugMessages()
