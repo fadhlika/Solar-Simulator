@@ -5,7 +5,7 @@ html, body {
     width: 99%;
 }
 
-#loader{
+div#loader{
     position: absolute;
     left: 50%;
     top: 50%;
@@ -20,6 +20,46 @@ html, body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+div#confirm-overlay {
+    display: none;
+    background-color: rgba(10, 10, 10, .5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 9999;
+}
+
+div#confirm-dialog {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 300px;
+    height: 100px;
+    top: 40%;
+    left: 40%;
+    background-color: white;
+    z-index: 99999;
+    position: absolute;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+div span#confirm-text {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    
+}
+
+.button-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 main {
@@ -154,13 +194,14 @@ label {
     font-size: 20px;
 }
 
-input[type="submit"] {
-    background-color: whitesmoke;    
+input[type="submit"], button  {
+    background-color: lightskyblue;    
     border: none;
     border-radius: 5px;
-    box-shadow: 2px 2px 0px lightgray;
-    width: 100px;
-    height: 40px;
+    box-shadow: 0px 2px 2px lightgray;
+    width: 70px;
+    height: 30px;
+    margin: 5px;
 }
 
 input[type="password"], input[type="email"] {
@@ -181,6 +222,10 @@ and (orientation: portrait) {
         flex-wrap: wrap;
     }
     
+    div#confirm-dialog {
+        left: 12%;
+    }
+
     h1 {
         flex-shrink: 0;
     }

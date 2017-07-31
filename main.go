@@ -78,6 +78,8 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 	case "PUT":
 
 	case "DELETE":
+		affect := dbDelete()
+		fmt.Fprintf(w, "%v", affect)
 	}
 }
 

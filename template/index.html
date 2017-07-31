@@ -2,6 +2,15 @@
 <body>
     {{template "topbar" }}
     <div id="loader"></div>
+    <div id="confirm-overlay" onclick="cancelDelete()">
+        <div id="confirm-dialog">
+            <span id="confirm-text">Are you sure to delete all data?</span>
+            <div class="button-bar">
+                <button onclick="confirmDelete()">Yes</button>
+                <button onclick="cancelDelete()">Cancel</button>
+            </div>
+        </div>
+    </div>
     <main id="main">
         <div class="chart-row">
             <div class="chart"><canvas id="tempChart"></canvas></div>

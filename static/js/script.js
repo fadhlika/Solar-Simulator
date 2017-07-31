@@ -186,6 +186,8 @@ $(document).ready(function(){
         }
     }
 
+    
+
     var sock = null;
     var wsuri = "ws://128.199.162.40/ws"
 
@@ -263,4 +265,25 @@ $(document).ready(function(){
         updateDebugData(data);
     })
 });
+
+function deleteData() {
+    document.getElementById('confirm-dialog').style.display = 'flex';
+    document.getElementById('confirm-overlay').style.display = 'block';
+}
+
+function confirmDelete() {
+    $.ajax({
+        url: '/data',
+        type: 'DELETE',
+        success: function(result) {
+            console.log(result);
+            window.location.reload();
+        }
+    })
+}
+
+function cancelDelete() {
+    document.getElementById('confirm-dialog').style.display = 'none';
+    document.getElementById('confirm-overlay').style.display = 'none';
+}
 
