@@ -162,17 +162,3 @@ func dbDebugQuery(query string) map[int]solardebug {
 	}
 	return datas
 }
-
-func dbDelete() int64 {
-	db.Begin()
-	stmt, err := db.Prepare("delete from solar_data")
-	checkErr(err)
-
-	res, err := stmt.Exec()
-	checkErr(err)
-
-	affect, err := res.RowsAffected()
-	checkErr(err)
-
-	return affect
-}

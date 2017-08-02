@@ -265,18 +265,3 @@ $(document).ready(function(){
         updateDebugData(data);
     })
 });
-
-function deleteData() {
-    document.getElementById('confirm-dialog').style.display = 'flex';
-    document.getElementById('confirm-overlay').style.display = 'block';
-}
-
-function confirmDelete() {
-    
-}
-
-function cancelDelete() {
-    document.getElementById('confirm-dialog').style.display = 'none';
-    document.getElementById('confirm-overlay').style.display = 'none';
-}
-
