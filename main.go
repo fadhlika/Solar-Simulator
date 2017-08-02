@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"sort"
-	"time"
 
 	"fmt"
 
@@ -40,23 +39,6 @@ var debugchannel = make(chan []byte)
 
 var db *sql.DB
 
-type solardata struct {
-	ID      int       `json:"id"`
-	Created time.Time `json:"created"`
-	Voltage float64   `json:"voltage"`
-	Current float64   `json:"current"`
-	Temp1   float64   `json:"temp1"`
-	Temp2   float64   `json:"temp2"`
-	Lum1    float64   `json:"lum1"`
-	Lum2    float64   `json:"lum2"`
-}
-
-type solardebug struct {
-	ID      int
-	Created time.Time
-	Message string
-}
-
 func renderTemplate(w http.ResponseWriter, tmpl string) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", nil)
 	if err != nil {
@@ -78,11 +60,12 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 	case "PUT":
 
 	case "DELETE":
+		dbDeleteAll()
 	}
 }
 
 func getHandler(w http.ResponseWriter) {
-	datas := dbQuery("select * from solar_data order by created desc")
+	datas := dbQuery("select * from solar_data where deleted=0 order by created desc ")
 	fmt.Println(datas)
 	json.NewEncoder(w).Encode(datas)
 }

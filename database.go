@@ -15,10 +15,12 @@ func dbInit() {
 		temp1   float,
 		temp2   float,
 		lum1    float,
-		lum2    float);
+		lum2    float,
+		deleted bool);
 	create table solar_debug (id integer primary key auto_increment, 
 		created datetime, 
-		message text);
+		message text,
+		deleted bool);
 	`
 	_, err := db.Exec(sqlStmt)
 	checkErr(err)
@@ -55,12 +57,13 @@ func dbInsert(s solardata) solardata {
 		var Temperature2 float64
 		var LightIntensity1 float64
 		var LightIntensity2 float64
-		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2)
+		var Deleted bool
+		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2, &Deleted)
 		if err != nil {
 			log.Fatal(err)
 		}
 		data = solardata{
-			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2,
+			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2, Deleted,
 		}
 	}
 	return data
@@ -120,12 +123,13 @@ func dbQuery(query string) map[int]solardata {
 		var Temperature2 float64
 		var LightIntensity1 float64
 		var LightIntensity2 float64
-		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2)
+		var Deleted bool
+		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2, &Deleted)
 		if err != nil {
 			log.Fatal(err)
 		}
 		datas[id] = solardata{
-			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2,
+			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2, Deleted,
 		}
 		fmt.Println(datas[id])
 	}
@@ -161,4 +165,22 @@ func dbDebugQuery(query string) map[int]solardebug {
 		log.Fatal(err)
 	}
 	return datas
+}
+
+func dbDeleteAll() {
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stmt, err := db.Prepare("update solar_data set deleted=?")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = tx.Stmt(stmt).Exec(true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	tx.Commit()
 }
