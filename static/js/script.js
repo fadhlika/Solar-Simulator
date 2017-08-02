@@ -272,14 +272,7 @@ function deleteData() {
 }
 
 function confirmDelete() {
-    $.ajax({
-        url: '/data',
-        type: 'DELETE',
-        success: function(result) {
-            console.log(result);
-            window.location.reload();
-        }
-    })
+    
 }
 
 function cancelDelete() {
