@@ -113,7 +113,7 @@ span#icon-label {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: lightskyblue;
+    background: lightblue;
     box-shadow: 0px 2px 2px lightgray;
     position: fixed;
     width: 100%;
