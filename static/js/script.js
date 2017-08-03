@@ -111,8 +111,6 @@ $(document).ready(function(){
         }
     });
 
-    var table = document.getElementById("solardata-table");
-
     function updateData(datas) {
         for (var data in datas) {
             var d = data;
@@ -122,63 +120,41 @@ $(document).ready(function(){
                 data = datas;
             }
 
-            var row = table.insertRow(1);
 
-            var c = new Date(data.created)
-            var cCell = row.insertCell(0);
-            cCell.innerHTML = c.toLocaleString();
-            
+            var c = new Date(data.created)            
             var voltage = data.voltage;
             voltageChart.data.datasets[0].data.push({
                     x: c,
                     y: voltage
             });
-            var vCell = row.insertCell(1);
-            vCell.innerHTML = voltage;
-
             var current = data.current;
             voltageChart.data.datasets[1].data.push({
                     x: c,
                     y: current
             });
             voltageChart.update();
-            var curCell = row.insertCell(2);
-            curCell.innerHTML = current;
-
             var temp1 = data.temp1;
             tempChart.data.datasets[0].data.push({
                     x: c,
                     y: temp1
             });
-            var t1Cell = row.insertCell(3)
-            t1Cell.innerHTML = temp1;
-
             var temp2 = data.temp2;
             tempChart.data.datasets[1].data.push({
                     x: c,
                     y: temp2
             });    
             tempChart.update();
-            var t2Cell = row.insertCell(4);
-            t2Cell.innerHTML = temp2;
-
             var lum1 = data.lum1;
             lumChart.data.datasets[0].data.push({
                     x: c,
                     y: lum1
             });
-            var l1Cell = row.insertCell(5);
-            l1Cell.innerHTML = lum1;
-            
             var lum2 = data.lum2;
             lumChart.data.datasets[1].data.push({
                     x: c,
                     y: lum2
             });
             lumChart.update();
-            var l2Cell = row.insertCell(6);
-            l2Cell.innerHTML = lum2;
-
             if (typeof datas[d] != 'object') {
                 return
             } 
@@ -208,7 +184,7 @@ $(document).ready(function(){
         updateData(data);
         showMain();
     })
-
+    
     function showMain() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("main").style.display = "flex";
