@@ -276,11 +276,7 @@ $(document).ready(function(){
         initData(data);
         showMain();
     })
-    
-    function showMain() {
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("main").style.display = "flex";
-    }
+
 
     var debugtable = document.getElementById("solardebug-table");
 
@@ -330,7 +326,7 @@ $(document).ready(function(){
     })
 
     function deleteData() {
-    document.getElementById("confirm-overlay").style.display = "block";
+        document.getElementById("confirm-overlay").style.display = "block";
     }
 
     function confirmDelete() {
