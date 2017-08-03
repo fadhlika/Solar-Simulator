@@ -39,8 +39,9 @@ var debugchannel = make(chan []byte)
 
 var db *sql.DB
 
-func renderTemplate(w http.ResponseWriter, tmpl string) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", nil)
+func renderTemplate(w http.ResponseWriter, tmpl string, data map[int]solardata) {
+	err := templates.ExecuteTemplate(w, tmpl+".html", data)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -48,7 +49,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "index")
+	datas := dbQuery("select * from solar_data where deleted=0 order by created desc")
+	renderTemplate(w, "index", datas)
 }
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +67,7 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getHandler(w http.ResponseWriter) {
-	datas := dbQuery("select * from solar_data where deleted=0 order by created desc ")
+	datas := dbQuery("select * from solar_data where deleted=0 order by created desc")
 	fmt.Println(datas)
 	json.NewEncoder(w).Encode(datas)
 }

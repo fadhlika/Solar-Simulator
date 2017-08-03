@@ -111,6 +111,56 @@ $(document).ready(function(){
         }
     });
 
+    function initData(datas) {
+        for (var data in datas) {
+            var d = data;
+            if (typeof datas[data] == 'object') {
+                data = datas[data]
+            } else {
+                data = datas;
+            }
+
+
+            var c = new Date(data.created)            
+            var voltage = data.voltage;
+            voltageChart.data.datasets[0].data.push({
+                    x: c,
+                    y: voltage
+            });
+            var current = data.current;
+            voltageChart.data.datasets[1].data.push({
+                    x: c,
+                    y: current
+            });
+            voltageChart.update();
+            var temp1 = data.temp1;
+            tempChart.data.datasets[0].data.push({
+                    x: c,
+                    y: temp1
+            });
+            var temp2 = data.temp2;
+            tempChart.data.datasets[1].data.push({
+                    x: c,
+                    y: temp2
+            });    
+            tempChart.update();
+            var lum1 = data.lum1;
+            lumChart.data.datasets[0].data.push({
+                    x: c,
+                    y: lum1
+            });
+            var lum2 = data.lum2;
+            lumChart.data.datasets[1].data.push({
+                    x: c,
+                    y: lum2
+            });
+            lumChart.update();
+            if (typeof datas[d] != 'object') {
+                return
+            } 
+        }
+    }
+
     var table = document.getElementById("solardata-table");
 
     function updateData(datas) {
@@ -124,9 +174,29 @@ $(document).ready(function(){
 
             var row = table.insertRow(1);
 
-            var c = new Date(data.created)
+            var c = new Date(data.created);
+            var month = c.getMonth() + 1;
+            if(month < 10) {
+                month = "0" + month;
+            }
+            var date = c.getDate();
+            if(date < 10) {
+                date = "0" + date;
+            }
+            var hour = c.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            var min = c.getMinutes();
+            if (min < 10) {
+                min = "0" + min;
+            }
+            var sec = c.getSeconds();
+            if(sec < 10) {
+                sec = "0" + sec;
+            }
             var cCell = row.insertCell(0);
-            cCell.innerHTML = c.toLocaleString();
+            cCell.innerHTML = c.getFullYear() + "-" + month + "-" + date +" " + hour + ":" + min + ":" + sec;
             
             var voltage = data.voltage;
             voltageChart.data.datasets[0].data.push({
@@ -185,10 +255,8 @@ $(document).ready(function(){
         }
     }
 
-    
-
     var sock = null;
-    var wsuri = "ws://128.199.162.40/ws"
+    var wsuri = "ws://127.0.0.1:8000/ws"
 
     sock = new WebSocket(wsuri);
     sock.onopen = function() {
@@ -205,10 +273,10 @@ $(document).ready(function(){
     }
 
     $.getJSON('data', function(data) {
-        updateData(data);
+        initData(data);
         showMain();
     })
-
+    
     function showMain() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("main").style.display = "flex";
@@ -241,7 +309,7 @@ $(document).ready(function(){
         }
     }
     var sockd = null;
-    var wsurid = "ws://128.199.162.40/wsd"
+    var wsurid = "ws://127.0.0.1:8000/wsd"
 
     sockd = new WebSocket(wsurid);
     sockd.onopen = function() {

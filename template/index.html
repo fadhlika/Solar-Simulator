@@ -49,6 +49,17 @@
                         <span>Lum 2</span>
                     </th>
                 </tr>
+                {{ range $k, $v := . }}
+                    <tr>
+                        <td>{{ $v.Created.Format "2006-01-02 15:04:05" }}</td>
+                        <td>{{ $v.Voltage }}</td>
+                        <td>{{ $v.Current }}</td>
+                        <td>{{ $v.Temp1 }}</td>
+                        <td>{{ $v.Temp2 }}</td>
+                        <td>{{ $v.Lum1 }}</td>
+                        <td>{{ $v.Lum2 }}</td>
+                    </tr>
+                {{ end }}
             </table>
         </div>
         <div class="data-container" id="debug">
