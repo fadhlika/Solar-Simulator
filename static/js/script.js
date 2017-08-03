@@ -121,7 +121,6 @@ $(document).ready(function(){
             } else {
                 data = datas;
             }
-            console.log(data);
 
             var row = table.insertRow(1);
 
@@ -202,7 +201,6 @@ $(document).ready(function(){
 
     sock.onmessage = function(e) {        
         var msg = JSON.parse(e.data)
-        console.log(msg);
         updateData(msg);
     }
 
@@ -226,7 +224,6 @@ $(document).ready(function(){
             } else {
                 data = datas;
             }
-            console.log(data);
 
             var row = debugtable.insertRow(1);
 
@@ -257,7 +254,6 @@ $(document).ready(function(){
 
     sockd.onmessage = function(e) {        
         var msg = JSON.parse(e.data)
-        console.log(e.data);
         updateDebugData(msg)
     }
 
@@ -268,7 +264,7 @@ $(document).ready(function(){
     function deleteData() {
     document.getElementById("confirm-overlay").style.display = "block";
     }
-    
+
     function confirmDelete() {
         $.ajax({
             url: '/data',
@@ -279,7 +275,7 @@ $(document).ready(function(){
             }
         });
     }
-    
+
     function cancelDelete() {
         document.getElementById("confirm-overlay").style.display = "none"
     }
