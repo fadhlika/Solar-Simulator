@@ -264,23 +264,23 @@ $(document).ready(function(){
     $.getJSON('debug', function(data) {
         updateDebugData(data);
     })
-});
 
-function deleteData() {
+    function deleteData() {
     document.getElementById("confirm-overlay").style.display = "block";
-}
-
-function confirmDelete() {
-    $.ajax({
-        url: '/data',
-        type: 'DELETE',
-        success: function(result){
-            console.log(result);
-            window.location.reload();
-        }
-    });
-}
-
-function cancelDelete() {
-    document.getElementById("confirm-overlay").style.display = "none"
-}
+    }
+    
+    function confirmDelete() {
+        $.ajax({
+            url: '/data',
+            type: 'DELETE',
+            success: function(result){
+                console.log(result);
+                window.location.reload();
+            }
+        });
+    }
+    
+    function cancelDelete() {
+        document.getElementById("confirm-overlay").style.display = "none"
+    }
+});
