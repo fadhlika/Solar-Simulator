@@ -111,7 +111,7 @@ $(document).ready(function(){
         }
     });
 
-    function updateData(datas) {
+    function initData(datas) {
         for (var data in datas) {
             var d = data;
             if (typeof datas[data] == 'object') {
@@ -161,10 +161,102 @@ $(document).ready(function(){
         }
     }
 
-    
+    var table = document.getElementById("solardata-table");
+
+    function updateData(datas) {
+        for (var data in datas) {
+            var d = data;
+            if (typeof datas[data] == 'object') {
+                data = datas[data]
+            } else {
+                data = datas;
+            }
+
+            var row = table.insertRow(1);
+
+            var c = new Date(data.created);
+            var month = c.getMonth() + 1;
+            if(month < 10) {
+                month = "0" + month;
+            }
+            var date = c.getDate();
+            if(date < 10) {
+                date = "0" + date;
+            }
+            var hour = c.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            var min = c.getMinutes();
+            if (min < 10) {
+                min = "0" + min;
+            }
+            var sec = c.getSeconds();
+            if(sec < 10) {
+                sec = "0" + sec;
+            }
+            var cCell = row.insertCell(0);
+            cCell.innerHTML = c.getFullYear() + "-" + month + "-" + date +" " + hour + ":" + min + ":" + sec;
+            
+            var voltage = data.voltage;
+            voltageChart.data.datasets[0].data.push({
+                    x: c,
+                    y: voltage
+            });
+            var vCell = row.insertCell(1);
+            vCell.innerHTML = voltage;
+
+            var current = data.current;
+            voltageChart.data.datasets[1].data.push({
+                    x: c,
+                    y: current
+            });
+            voltageChart.update();
+            var curCell = row.insertCell(2);
+            curCell.innerHTML = current;
+
+            var temp1 = data.temp1;
+            tempChart.data.datasets[0].data.push({
+                    x: c,
+                    y: temp1
+            });
+            var t1Cell = row.insertCell(3)
+            t1Cell.innerHTML = temp1;
+
+            var temp2 = data.temp2;
+            tempChart.data.datasets[1].data.push({
+                    x: c,
+                    y: temp2
+            });    
+            tempChart.update();
+            var t2Cell = row.insertCell(4);
+            t2Cell.innerHTML = temp2;
+
+            var lum1 = data.lum1;
+            lumChart.data.datasets[0].data.push({
+                    x: c,
+                    y: lum1
+            });
+            var l1Cell = row.insertCell(5);
+            l1Cell.innerHTML = lum1;
+            
+            var lum2 = data.lum2;
+            lumChart.data.datasets[1].data.push({
+                    x: c,
+                    y: lum2
+            });
+            lumChart.update();
+            var l2Cell = row.insertCell(6);
+            l2Cell.innerHTML = lum2;
+
+            if (typeof datas[d] != 'object') {
+                return
+            } 
+        }
+    }
 
     var sock = null;
-    var wsuri = "ws://128.199.162.40/ws"
+    var wsuri = "ws://127.0.0.1:8000/ws"
 
     sock = new WebSocket(wsuri);
     sock.onopen = function() {
@@ -181,7 +273,7 @@ $(document).ready(function(){
     }
 
     $.getJSON('data', function(data) {
-        updateData(data);
+        initData(data);
         showMain();
     })
     
@@ -217,7 +309,7 @@ $(document).ready(function(){
         }
     }
     var sockd = null;
-    var wsurid = "ws://128.199.162.40/wsd"
+    var wsurid = "ws://127.0.0.1:8000/wsd"
 
     sockd = new WebSocket(wsurid);
     sockd.onopen = function() {
