@@ -48,15 +48,16 @@
                         <span>Lum 2</span>
                     </th>
                 </tr>
-                {{ range $k, $v := . }}
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
                     <tr>
-                        <td>{{ $v.Created.Format "2006-01-02 15:04:05" }}</td>
-                        <td>{{ $v.Voltage }}</td>
-                        <td>{{ $v.Current }}</td>
-                        <td>{{ $v.Temp1 }}</td>
-                        <td>{{ $v.Temp2 }}</td>
-                        <td>{{ $v.Lum1 }}</td>
-                        <td>{{ $v.Lum2 }}</td>
+                        <td>{{ (index $data $v).Created.Format "2006-01-02 15:04:05" }}</td>
+                        <td>{{ (index $data $v).Voltage }}</td>
+                        <td>{{ (index $data $v).Current }}</td>
+                        <td>{{ (index $data $v).Temp1 }}</td>
+                        <td>{{ (index $data $v).Temp2 }}</td>
+                        <td>{{ (index $data $v).Lum1 }}</td>
+                        <td>{{ (index $data $v).Lum2 }}</td>
                     </tr>
                 {{ end }}
             </table>
