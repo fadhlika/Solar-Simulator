@@ -22,7 +22,8 @@ import (
 var templates = template.Must(template.ParseFiles(
 	"template/head.html",
 	"template/topbar.html",
-	"template/index.html"))
+	"template/index.html",
+	"template/aws.html"))
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -41,7 +42,7 @@ var db *sql.DB
 
 type M map[string]interface{}
 
-func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data map[int]solardata) {
+func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", M{"keys": keys, "data": data})
 
 	if err != nil {
@@ -58,6 +59,37 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
 	renderTemplate(w, "index", keys, datas)
+}
+
+func awsHandler(w http.ResponseWriter, r *http.Request) {
+	datas := dbAwsQuery("select * from aws_data where deleted=0 order by created desc")
+	var keys []int
+	for k := range datas {
+		keys = append(keys, k)
+	}
+	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
+	renderTemplate(w, "aws", keys, datas)
+}
+
+func dataAwsHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		datas := dbAwsQuery("select * from solar_data where deleted=0 order by created desc")
+		fmt.Println(datas)
+		json.NewEncoder(w).Encode(datas)
+	case "POST":
+		b, err := ioutil.ReadAll(r.Body)
+		checkErr(err)
+		fmt.Println(string(b))
+
+		var s awsdata
+		err = json.Unmarshal(b, &s)
+		checkErr(err)
+		fmt.Println(s)
+
+		data := dbAwsInsert(s)
+		fmt.Println(data)
+	}
 }
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
@@ -204,7 +236,9 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/data", dataHandler)
+	http.HandleFunc("/data/aws", dataAwsHandler)
 	http.HandleFunc("/debug", debugHandler)
+	http.HandleFunc("/aws", awsHandler)
 	http.HandleFunc("/export", exportHandler)
 	http.HandleFunc("/ws", handleConnections)
 	http.HandleFunc("/wsd", handleDebugConnections)
