@@ -210,6 +210,37 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 		{"name":"=Sheet1!$G$1","categories":"=Sheet1!$A$2:$A$%d","values":"=Sheet1!$G$2:$G$%d"}
 		], "title":{"name": "Luminance"}}`, i, i, i, i))
 
+	awsdatas := dbAwsQuery("select * from aws_data where deleted=0 order by id DESC")
+
+	for k := range awsdatas {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+
+	i = 2
+	for _, k := range keys {
+		fmt.Println("data: ", awsdatas[k])
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "A", i), awsdatas[k].Created.Format("2006-01-02 15:04:05"))
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "B", i), awsdatas[k].IndoorTemp)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "C", i), awsdatas[k].IndoorHumid)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "D", i), awsdatas[k].AbsolutePressure)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "E", i), awsdatas[k].RelativePressure)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "F", i), awsdatas[k].OutdoorTemp)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "G", i), awsdatas[k].OutdoorHumid)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "H", i), awsdatas[k].WindDirection)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "I", i), awsdatas[k].WindSpeed)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "J", i), awsdatas[k].WindGust)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "K", i), awsdatas[k].SolarRadiation)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "L", i), awsdatas[k].UV)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "M", i), awsdatas[k].UVI)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "N", i), awsdatas[k].HourlyRain)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "O", i), awsdatas[k].DailyRain)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "P", i), awsdatas[k].WeeklyRain)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "Q", i), awsdatas[k].MonthlyRain)
+		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "R", i), awsdatas[k].YearlyRain)
+		i++
+	}
+
 	err := xlsx.SaveAs("./Solar-Simulator-Exported.xlsx")
 	checkErr(err)
 
