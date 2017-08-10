@@ -210,6 +210,25 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 		{"name":"=Sheet1!$G$1","categories":"=Sheet1!$A$2:$A$%d","values":"=Sheet1!$G$2:$G$%d"}
 		], "title":{"name": "Luminance"}}`, i, i, i, i))
 
+	xlsx.SetCellValue("Sheet1", "A1", "Date")
+	xlsx.SetCellValue("Sheet1", "B1", "IndoorTemp")
+	xlsx.SetCellValue("Sheet1", "C1", "IndoorHumid")
+	xlsx.SetCellValue("Sheet1", "D1", "AbsolutePressure")
+	xlsx.SetCellValue("Sheet1", "E1", "RelativePressure")
+	xlsx.SetCellValue("Sheet1", "F1", "OutdoorHumid")
+	xlsx.SetCellValue("Sheet1", "G1", "OutdoorHumid")
+	xlsx.SetCellValue("Sheet1", "H1", "WindDirection")
+	xlsx.SetCellValue("Sheet1", "I1", "WindSpeed")
+	xlsx.SetCellValue("Sheet1", "J1", "WindGust")
+	xlsx.SetCellValue("Sheet1", "K1", "SolarRadiation")
+	xlsx.SetCellValue("Sheet1", "L1", "UV")
+	xlsx.SetCellValue("Sheet1", "M1", "UVI")
+	xlsx.SetCellValue("Sheet1", "N1", "HourlyRain")
+	xlsx.SetCellValue("Sheet1", "K1", "DailyRain")
+	xlsx.SetCellValue("Sheet1", "L1", "WeeklyRain")
+	xlsx.SetCellValue("Sheet1", "M1", "MonthlyRain")
+	xlsx.SetCellValue("Sheet1", "N1", "YearlyRain")
+
 	awsdatas := dbAwsQuery("select * from aws_data where deleted=0 order by id DESC")
 
 	for k := range awsdatas {
