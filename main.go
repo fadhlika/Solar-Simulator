@@ -283,6 +283,8 @@ func main() {
 	go handleMessages()
 	go handleDebugMessages()
 
+	go periodScrap()
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/login", loginHandler)
