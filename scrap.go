@@ -12,7 +12,7 @@ func periodScrap() {
 	for {
 		scrapAws()
 
-		time.Sleep(15 * time.Second)
+		time.Sleep(60 * time.Second)
 	}
 }
 
