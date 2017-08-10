@@ -316,9 +316,10 @@ $(document).ready(function(){
         console.log("connection closed (" + e.code + ")");
     }
 
-    sockd.onmessage = function(e) {        
-        var msg = JSON.parse(e.data)
-        updateDebugData(msg)
+    sockd.onmessage = function(e) {       
+        console.log(e.data);
+        var msg = JSON.parse(e.data);
+        updateDebugData(msg);
     }
 
     $.getJSON('debug', function(data) {
