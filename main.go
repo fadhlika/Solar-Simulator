@@ -210,6 +210,7 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 		{"name":"=Sheet1!$G$1","categories":"=Sheet1!$A$2:$A$%d","values":"=Sheet1!$G$2:$G$%d"}
 		], "title":{"name": "Luminance"}}`, i, i, i, i))
 
+	xlsx.NewSheet(2, "Sheet2")
 	xlsx.SetCellValue("Sheet2", "A1", "Date")
 	xlsx.SetCellValue("Sheet2", "B1", "IndoorTemp")
 	xlsx.SetCellValue("Sheet2", "C1", "IndoorHumid")
