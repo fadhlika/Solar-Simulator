@@ -52,7 +52,6 @@ func handleMessages() {
 	for {
 		select {
 		case message, ok := <-broadcast:
-			log.Printf("Websocket message: %v\n", message)
 			for client := range clients {
 				defer client.Close()
 				client.SetWriteDeadline(time.Now().Add(writeWait))
@@ -98,10 +97,18 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
+	ws.SetReadDeadline(time.Now().Add(pongWait))
+	ws.SetPongHandler(func(string) error {
+		ws.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
 	debugclients[ws] = true
 	for {
 		_, m, err := ws.ReadMessage()
 		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+				log.Printf("error close: %v", err)
+			}
 			log.Printf("error: %v", err)
 			delete(debugclients, ws)
 			break
@@ -111,14 +118,44 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDebugMessages() {
+	ticker := time.NewTicker(pongPeriod)
+	defer ticker.Stop()
+
 	for {
-		m := <-debugchannel
-		for client := range debugclients {
-			err := client.WriteMessage(websocket.TextMessage, m)
-			if err != nil {
-				log.Printf("error: %v", err)
-				client.Close()
-				delete(debugclients, client)
+		select {
+		case m, ok := <-debugchannel:
+			for client := range debugclients {
+				defer client.Close()
+				client.SetWriteDeadline(time.Now().Add(writeWait))
+
+				if !ok {
+					client.WriteMessage(websocket.CloseMessage, []byte{})
+					return
+				}
+
+				w, err := client.NextWriter(websocket.TextMessage)
+				if err != nil {
+					log.Printf("error nextwriter: %v", err)
+					client.Close()
+					delete(clients, client)
+				}
+				_, err = w.Write([]byte(m))
+				if err != nil {
+					log.Printf("error: %v", err)
+					w.Close()
+					delete(debugclients, client)
+				}
+				if err = w.Close(); err != nil {
+					return
+				}
+			}
+		case <-ticker.C:
+			for client := range clients {
+				client.SetWriteDeadline(time.Now().Add(writeWait))
+				if err := client.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+					log.Println("Websocket ping error")
+					return
+				}
 			}
 		}
 	}
