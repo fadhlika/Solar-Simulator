@@ -241,7 +241,7 @@ function updateData(datas) {
         } 
     }
 }
-var ipaddr = "127.0.0.1:8000"
+var ipaddr = "128.199.162.40"
 
 var sock = null;
 var wsuri = "ws://" + ipaddr  + "/ws"

@@ -15,7 +15,7 @@ const (
 	pongPeriod = (pongWait * 9) / 10
 )
 
-var url string = "ws://127.0.0.1:8000"
+var url string = "ws://128.199.162.40"
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
