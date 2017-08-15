@@ -7,6 +7,9 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"time"
+
+	"github.com/eclipse/paho.mqtt.golang"
 
 	"fmt"
 
@@ -21,6 +24,7 @@ import (
 
 var templates = template.Must(template.ParseFiles(
 	"template/head.html",
+	"template/footer.html",
 	"template/topbar.html",
 	"template/index.html",
 	"template/aws.html"))
@@ -39,6 +43,7 @@ var broadcast = make(chan solardata)
 var debugchannel = make(chan []byte)
 
 var db *sql.DB
+var mqttClient mqtt.Client
 
 type M map[string]interface{}
 
@@ -75,20 +80,16 @@ func dataAwsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		datas := dbAwsQuery("select * from solar_data where deleted=0 order by created desc")
-		fmt.Println(datas)
 		json.NewEncoder(w).Encode(datas)
 	case "POST":
 		b, err := ioutil.ReadAll(r.Body)
 		checkErr(err)
-		fmt.Println(string(b))
 
 		var s awsdata
 		err = json.Unmarshal(b, &s)
 		checkErr(err)
-		fmt.Println(s)
 
-		data := dbAwsInsert(s)
-		fmt.Println(data)
+		dbAwsInsert(s)
 	}
 }
 
@@ -107,7 +108,6 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 
 func getHandler(w http.ResponseWriter) {
 	datas := dbQuery("select * from solar_data where deleted=0 order by created desc")
-	fmt.Println(datas)
 	json.NewEncoder(w).Encode(datas)
 }
 
@@ -116,12 +116,10 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Body)
 	b, err := ioutil.ReadAll(r.Body)
 	checkErr(err)
-	fmt.Println(string(b))
 
 	var s solardata
 	err = json.Unmarshal(b, &s)
 	checkErr(err)
-	fmt.Println(s)
 
 	data := dbInsert(s)
 	sendWS(data)
@@ -131,15 +129,12 @@ func debugHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		datas := dbDebugQuery("select * from solar_debug order by created desc")
-		fmt.Println(datas)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(datas)
 	case "POST":
 		//Get json data from POST request body and decode to solardata struct
-		log.Println(r.Body)
 		b, err := ioutil.ReadAll(r.Body)
 		checkErr(err)
-		fmt.Println(string(b))
 
 		data := dbDebugInsert(string(b))
 		sendDebugWS(data)
@@ -270,6 +265,11 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./Solar-Simulator-Exported.xlsx")
 }
 
+func measureHandler(w http.ResponseWriter, r *http.Request) {
+	mqttClient.Publish("scemoCmd", 0, false, "1")
+	log.Println("IV Measure")
+}
+
 func main() {
 	log.Println("starting application")
 	log.Println("Opening database")
@@ -285,6 +285,52 @@ func main() {
 
 	go periodScrap()
 
+	opts := mqtt.NewClientOptions().AddBroker("tcp://elka.fi.itb.ac.id:222").SetClientID("WebScemo")
+	opts.SetDefaultPublishHandler(func(c mqtt.Client, msg mqtt.Message) {
+		fmt.Printf("Topic: %s\n", msg.Topic())
+		fmt.Printf("Message: %s\n", msg.Payload())
+	})
+
+	opts.SetKeepAlive(2 * time.Second)
+	opts.SetPingTimeout(1 * time.Second)
+	opts.OnConnect = func(c mqtt.Client) {
+		token := c.Subscribe("scemoData", 0, func(client mqtt.Client, msg mqtt.Message) {
+			d := msg.Payload()
+			fmt.Printf("Topic: %s\n", msg.Topic())
+			fmt.Printf("Msg: %s\n", d)
+			var s solardata
+			err := json.Unmarshal(d, &s)
+			checkErr(err)
+			fmt.Println(s)
+
+			data := dbInsert(s)
+			sendWS(data)
+		})
+
+		if token.Wait() && token.Error() != nil {
+			fmt.Println(token.Error())
+		}
+
+		tokend := c.Subscribe("scemoDebug", 0, func(client mqtt.Client, msg mqtt.Message) {
+			d := msg.Payload()
+			fmt.Printf("Topic: %s\n", msg.Topic())
+			fmt.Printf("Msg: %s\n", d)
+			data := dbDebugInsert(string(d))
+			sendDebugWS(data)
+		})
+
+		if tokend.Wait() && tokend.Error() != nil {
+			fmt.Println(token.Error())
+		}
+	}
+
+	mqttClient = mqtt.NewClient(opts)
+	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		fmt.Println(token.Error())
+	} else {
+		fmt.Println("connected to mqtt")
+	}
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/login", loginHandler)
@@ -295,14 +341,7 @@ func main() {
 	http.HandleFunc("/export", exportHandler)
 	http.HandleFunc("/ws", handleConnections)
 	http.HandleFunc("/wsd", handleDebugConnections)
-	/*
-		conn, err := net.Dial("tcp", "8.8.8.8:80")
-		checkErr(err)
-		defer conn.Close()
-
-		localAddr := conn.LocalAddr().String()
-		log.Printf("Application started in http://%s:8000", strings.Split(localAddr, ":")[0])
-	*/
+	http.HandleFunc("/measure", measureHandler)
 
 	log.Println("Application started in http://127.0.0.1:8000")
 	http.ListenAndServe(":8000", nil)

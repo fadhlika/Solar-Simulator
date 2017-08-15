@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
@@ -9,18 +8,19 @@ import (
 func dbInit() {
 	sqlStmt := `
 	create table solar_data (id integer primary key auto_increment, 
-		created datetime, 
-		voltage float,
-		current float,
-		temp1   float,
-		temp2   float,
-		lum1    float,
-		lum2    float,
-		deleted bool);
+	created datetime, 
+	voltage float,
+	current float,
+	temp1   float,
+	temp2   float,
+	lum1    float,
+	lum2    float,
+	deleted bool);
+	
 	create table solar_debug (id integer primary key auto_increment, 
-		created datetime, 
-		message text,
-		deleted bool);
+	created datetime, 
+	message text,
+	deleted bool);
 
 	create table aws_data(id integer primary key auto_increment,
 	created datetime,
@@ -199,7 +199,6 @@ func dbQuery(query string) map[int]solardata {
 		datas[id] = solardata{
 			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2, Deleted,
 		}
-		fmt.Println(datas[id])
 	}
 	err = rows.Err()
 	if err != nil {
@@ -227,7 +226,6 @@ func dbDebugQuery(query string) map[int]solardebug {
 		datas[id] = solardebug{
 			id, Date, Message, Deleted,
 		}
-		fmt.Println(datas[id])
 	}
 	err = rows.Err()
 	if err != nil {
@@ -271,7 +269,6 @@ func dbAwsQuery(query string) map[int]awsdata {
 		datas[id] = awsdata{
 			id, Date, IndoorTemp, IndoorHumid, AbsolutePressure, RelativePressure, OutdoorTemp, OutdoorHumid, WindDirection, WindSpeed, WindGust, SolarRadiation, UV, UVI, HourlyRain, DailyRain, WeeklyRain, MonthlyRain, YearlyRain, Deleted,
 		}
-		fmt.Println(datas[id])
 	}
 	err = rows.Err()
 	if err != nil {
