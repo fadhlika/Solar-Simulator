@@ -7,10 +7,8 @@ import (
 	"log"
 	"net/http"
 	"sort"
-	"time"
+	"strconv"
 	"sync"
-
-	"github.com/eclipse/paho.mqtt.golang"
 
 	"fmt"
 
@@ -37,14 +35,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var clients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{},}
-var debugclients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{},}
+var clients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{}}
+var debugclients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{}}
 
 var broadcast = make(chan solardata)
 var debugchannel = make(chan []byte)
 
 var db *sql.DB
-var mqttClient mqtt.Client
+var measure = false
 
 type M map[string]interface{}
 
@@ -117,7 +115,7 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Body)
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("post error: %v\n", err.Error);
+		log.Printf("post error: %v\n", err.Error)
 		return
 	}
 
@@ -271,8 +269,22 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func measureHandler(w http.ResponseWriter, r *http.Request) {
-	mqttClient.Publish("scemoCmd", 0, false, "1")
-	log.Println("IV Measure")
+	switch r.Method {
+	case "GET":
+		log.Printf("IV Measure: %v\n", measure)
+		fmt.Fprintf(w, "%v", measure)
+		measure = false
+		log.Printf("IV Measure: %v\n", measure)
+	case "POST":
+		m, err := strconv.ParseBool(r.FormValue("measure"))
+		if err != nil {
+			log.Println("Post measure convert error")
+			return
+		}
+		measure = m
+		log.Printf("POST measure: %v\n", measure)
+	}
+
 }
 
 func main() {
@@ -289,63 +301,6 @@ func main() {
 	go handleDebugMessages()
 
 	go periodScrap()
-
-	opts := mqtt.NewClientOptions().AddBroker("tcp://elka.fi.itb.ac.id:222").SetClientID("WebScemo")
-	opts.SetDefaultPublishHandler(func(c mqtt.Client, msg mqtt.Message) {
-		fmt.Printf("Topic: %s\n", msg.Topic())
-		fmt.Printf("Message: %s\n", msg.Payload())
-	})
-	opts.SetConnectionLostHandler(func(c mqtt.Client, err error) {
-		log.Printf("Connection lost: %v", err.Error())
-	})
-	opts.SetKeepAlive(2 * time.Second)
-	opts.SetPingTimeout(1 * time.Second)
-	opts.SetAutoReconnect(true)
-	opts.SetConnectTimeout(30 * time.Second)
-	opts.SetKeepAlive(60 * time.Minute)
-	opts.SetCleanSession(true)
-
-	opts.OnConnect = func(c mqtt.Client) {
-		topics := map[string]byte{
-			"scemoData":  0,
-			"scemoDebug": 0,
-			"scemoCmd":   0,
-		}
-		token := c.SubscribeMultiple(topics, func(client mqtt.Client, msg mqtt.Message) {
-			topic := string(msg.Topic())
-			d := msg.Payload()
-			fmt.Printf("Topic: %s\n", topic)
-			fmt.Printf("Msg: %s\n", d)
-
-			switch topic {
-			case "scemoData":
-				var s solardata
-				err := json.Unmarshal(d, &s)
-				checkErr(err)
-				fmt.Println(s)
-				data := dbInsert(s)
-				sendWS(data)
-				break
-			case "scemoDebug":
-				data := dbDebugInsert(string(d))
-				sendDebugWS(data)
-				break
-			default:
-				break
-			}
-		})
-
-		if token.Wait() && token.Error() != nil {
-			fmt.Println(token.Error())
-		}
-	}
-
-	mqttClient = mqtt.NewClient(opts)
-	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
-		fmt.Printf("Connect failed: %v\n", token.Error())
-	} else {
-		fmt.Println("connected to mqtt")
-	}
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", indexHandler)

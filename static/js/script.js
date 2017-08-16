@@ -314,7 +314,8 @@ $(document).ready(function(){
     $("#iv-measurement").click(function(){
         $.ajax({
             url: '/measure',
-            type: 'GET',
+            type: 'POST',
+            data: {measure: 1},
             success: function(result){
                 console.log("start measuring");
             }
