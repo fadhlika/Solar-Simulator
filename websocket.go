@@ -16,7 +16,7 @@ const (
 	pongPeriod = (pongWait * 9) / 10
 )
 
-var url string = "ws://128.199.162.40"
+var url string = "127.0.0.1:8000"
 
 type Clients struct {
 	c  map[*websocket.Conn]bool
@@ -54,10 +54,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 func handleMessages() {
 	clients.mu.Lock()
 	defer clients.mu.Unlock()
-	
+
 	ticker := time.NewTicker(pongPeriod)
 	defer ticker.Stop()
-	
+
 	for {
 		select {
 		case message, ok := <-broadcast:
@@ -174,7 +174,7 @@ func handleDebugMessages() {
 }
 
 func dialWs() *websocket.Conn {
-	conn, _, err := websocket.DefaultDialer.Dial(url+"/ws", nil)
+	conn, _, err := websocket.DefaultDialer.Dial("ws://"+url+"/ws", nil)
 	if err != nil {
 		log.Println("write: ", err)
 	}
@@ -182,7 +182,7 @@ func dialWs() *websocket.Conn {
 }
 
 func dialDebugWs() *websocket.Conn {
-	conn, _, err := websocket.DefaultDialer.Dial(url+"/wsd", nil)
+	conn, _, err := websocket.DefaultDialer.Dial("ws://"+url+"/wsd", nil)
 	if err != nil {
 		log.Println("write: ", err)
 	}

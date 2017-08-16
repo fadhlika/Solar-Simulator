@@ -1,7 +1,15 @@
 {{ define "topbar"}}
 <div class="topbar">
-    <h1>Solar Simulator</h1>
+    <div class="title">
+        <h1>Solar Simulator</h1>
+        <a href="/"><span></span></a>
+    </div>
     <div class="icon-bar">
+        <div class="icon" id="debug-list">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+            <span id="icon-label">Debug</span>
+            <a><span></span></a>
+        </div>
         <div class="icon" id="aws">
             <i class="fa fa-sun-o" aria-hidden="true"></i>
             <span id="icon-label">AWS</span>
@@ -10,7 +18,7 @@
         <div class="icon" id="delete">
             <i class="fa fa-trash-o" aria-hidden="true"></i>
             <span id="icon-label">Delete All</span>
-            <a onclick="deleteData()"><span></span></a>
+            <a><span></span></a>
         </div>
         <div class="icon" id="iv-measurement">
             <i class="fa fa-bolt" aria-hidden="true"></i>

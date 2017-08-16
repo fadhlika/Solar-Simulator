@@ -23,6 +23,8 @@ import (
 
 var templates = template.Must(template.ParseFiles(
 	"template/head.html",
+	"template/notification.html",
+	"template/confirm-dialog.html",
 	"template/topbar.html",
 	"template/index.html",
 	"template/aws.html"))
@@ -115,13 +117,16 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Body)
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("post error: %v\n", err.Error)
+		log.Printf("post error: %v\n", err.Error())
 		return
 	}
 
 	var s solardata
 	err = json.Unmarshal(b, &s)
-	checkErr(err)
+	if err != nil {
+		log.Printf("Json unmarsal error: %v\n", err.Error())
+		return
+	}
 
 	data := dbInsert(s)
 	sendWS(data)
