@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +18,11 @@ const (
 
 var url string = "ws://128.199.162.40"
 
+type Clients struct {
+	c  map[*websocket.Conn]bool
+	mu sync.Mutex
+}
+
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -29,7 +35,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		ws.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
-	clients[ws] = true
+	clients.c[ws] = true
 	for {
 		var data solardata
 		err := ws.ReadJSON(&data)
@@ -38,7 +44,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				log.Printf("error close: %v", err)
 			}
 			log.Printf("error: %v", err)
-			delete(clients, ws)
+			delete(clients.c, ws)
 			break
 		}
 		broadcast <- data
@@ -46,13 +52,16 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleMessages() {
+	clients.mu.Lock()
+	defer clients.mu.Unlock()
+	
 	ticker := time.NewTicker(pongPeriod)
 	defer ticker.Stop()
-
+	
 	for {
 		select {
 		case message, ok := <-broadcast:
-			for client := range clients {
+			for client := range clients.c {
 				defer client.Close()
 				client.SetWriteDeadline(time.Now().Add(writeWait))
 
@@ -65,13 +74,13 @@ func handleMessages() {
 				if err != nil {
 					log.Printf("error nextwriter: %v", err)
 					client.Close()
-					delete(clients, client)
+					delete(clients.c, client)
 				}
 				err = json.NewEncoder(w).Encode(message)
 				if err != nil {
 					log.Printf("error json newencoder: %v", err)
 					w.Close()
-					delete(clients, client)
+					delete(clients.c, client)
 				}
 
 				if err = w.Close(); err != nil {
@@ -79,7 +88,7 @@ func handleMessages() {
 				}
 			}
 		case <-ticker.C:
-			for client := range clients {
+			for client := range clients.c {
 				client.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := client.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 					log.Println("Websocket ping error")
@@ -102,7 +111,7 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 		ws.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
-	debugclients[ws] = true
+	debugclients.c[ws] = true
 	for {
 		_, m, err := ws.ReadMessage()
 		if err != nil {
@@ -110,7 +119,7 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 				log.Printf("error close: %v", err)
 			}
 			log.Printf("error: %v", err)
-			delete(debugclients, ws)
+			delete(debugclients.c, ws)
 			break
 		}
 		debugchannel <- m
@@ -118,13 +127,16 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDebugMessages() {
+	clients.mu.Lock()
+	defer clients.mu.Unlock()
+
 	ticker := time.NewTicker(pongPeriod)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case m, ok := <-debugchannel:
-			for client := range debugclients {
+			for client := range debugclients.c {
 				defer client.Close()
 				client.SetWriteDeadline(time.Now().Add(writeWait))
 
@@ -137,20 +149,20 @@ func handleDebugMessages() {
 				if err != nil {
 					log.Printf("error nextwriter: %v", err)
 					client.Close()
-					delete(clients, client)
+					delete(clients.c, client)
 				}
 				_, err = w.Write([]byte(m))
 				if err != nil {
 					log.Printf("error: %v", err)
 					w.Close()
-					delete(debugclients, client)
+					delete(debugclients.c, client)
 				}
 				if err = w.Close(); err != nil {
 					return
 				}
 			}
 		case <-ticker.C:
-			for client := range clients {
+			for client := range clients.c {
 				client.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := client.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 					log.Println("Websocket ping error")

@@ -19,7 +19,10 @@ func periodScrap() {
 func scrapAws() {
 	shouldUpdate := true
 	doc, err := goquery.NewDocument("https://www.elka.fi.itb.ac.id/aws")
-	checkErr(err)
+	if err != nil {
+		log.Println("Error goquery")
+		return
+	}
 
 	units := make(map[string]float64)
 	doc.Find("input").Each(func(i int, s *goquery.Selection) {

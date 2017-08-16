@@ -36,8 +36,9 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var clients = make(map[*websocket.Conn]bool)
-var debugclients = make(map[*websocket.Conn]bool)
+var clients = Clients{}
+var debugclients = Clients{}
+
 var broadcast = make(chan solardata)
 var debugchannel = make(chan []byte)
 
@@ -152,7 +153,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func checkErr(err error) {
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
+		return
 	}
 }
 
@@ -289,43 +291,54 @@ func main() {
 		fmt.Printf("Topic: %s\n", msg.Topic())
 		fmt.Printf("Message: %s\n", msg.Payload())
 	})
-
+	opts.SetConnectionLostHandler(func(c mqtt.Client, err error) {
+		log.Printf("Connection lost: %v", err.Error())
+	})
 	opts.SetKeepAlive(2 * time.Second)
 	opts.SetPingTimeout(1 * time.Second)
-	opts.OnConnect = func(c mqtt.Client) {
-		token := c.Subscribe("scemoData", 0, func(client mqtt.Client, msg mqtt.Message) {
-			d := msg.Payload()
-			fmt.Printf("Topic: %s\n", msg.Topic())
-			fmt.Printf("Msg: %s\n", d)
-			var s solardata
-			err := json.Unmarshal(d, &s)
-			checkErr(err)
-			fmt.Println(s)
+	opts.SetAutoReconnect(true)
+	opts.SetConnectTimeout(30 * time.Second)
+	opts.SetKeepAlive(60 * time.Minute)
+	opts.SetCleanSession(true)
 
-			data := dbInsert(s)
-			sendWS(data)
+	opts.OnConnect = func(c mqtt.Client) {
+		topics := map[string]byte{
+			"scemoData":  0,
+			"scemoDebug": 0,
+			"scemoCmd":   0,
+		}
+		token := c.SubscribeMultiple(topics, func(client mqtt.Client, msg mqtt.Message) {
+			topic := string(msg.Topic())
+			d := msg.Payload()
+			fmt.Printf("Topic: %s\n", topic)
+			fmt.Printf("Msg: %s\n", d)
+
+			switch topic {
+			case "scemoData":
+				var s solardata
+				err := json.Unmarshal(d, &s)
+				checkErr(err)
+				fmt.Println(s)
+				data := dbInsert(s)
+				sendWS(data)
+				break
+			case "scemoDebug":
+				data := dbDebugInsert(string(d))
+				sendDebugWS(data)
+				break
+			default:
+				break
+			}
 		})
 
 		if token.Wait() && token.Error() != nil {
-			fmt.Println(token.Error())
-		}
-
-		tokend := c.Subscribe("scemoDebug", 0, func(client mqtt.Client, msg mqtt.Message) {
-			d := msg.Payload()
-			fmt.Printf("Topic: %s\n", msg.Topic())
-			fmt.Printf("Msg: %s\n", d)
-			data := dbDebugInsert(string(d))
-			sendDebugWS(data)
-		})
-
-		if tokend.Wait() && tokend.Error() != nil {
 			fmt.Println(token.Error())
 		}
 	}
 
 	mqttClient = mqtt.NewClient(opts)
 	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
-		fmt.Println(token.Error())
+		fmt.Printf("Connect failed: %v\n", token.Error())
 	} else {
 		fmt.Println("connected to mqtt")
 	}
