@@ -24,7 +24,6 @@ import (
 
 var templates = template.Must(template.ParseFiles(
 	"template/head.html",
-	"template/footer.html",
 	"template/topbar.html",
 	"template/index.html",
 	"template/aws.html"))
