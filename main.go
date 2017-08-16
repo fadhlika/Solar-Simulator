@@ -272,7 +272,12 @@ func measureHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		log.Printf("IV Measure: %v\n", measure)
-		fmt.Fprintf(w, "%v", measure)
+		if measure {
+			fmt.Fprintf(w, "%v", 1)
+			measure = false
+		} else {
+			fmt.Fprintf(w, "%v", 0)
+		}
 	case "POST":
 		m, err := strconv.ParseBool(r.FormValue("measure"))
 		if err != nil {
