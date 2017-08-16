@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sort"
 	"time"
+	"sync"
 
 	"github.com/eclipse/paho.mqtt.golang"
 
@@ -36,8 +37,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var clients = Clients{}
-var debugclients = Clients{}
+var clients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{},}
+var debugclients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{},}
 
 var broadcast = make(chan solardata)
 var debugchannel = make(chan []byte)
@@ -115,7 +116,10 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	//Get json data from POST request body and decode to solardata struct
 	log.Println(r.Body)
 	b, err := ioutil.ReadAll(r.Body)
-	checkErr(err)
+	if err != nil {
+		log.Printf("post error: %v\n", err.Error);
+		return
+	}
 
 	var s solardata
 	err = json.Unmarshal(b, &s)

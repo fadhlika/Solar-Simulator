@@ -127,8 +127,8 @@ func handleDebugConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDebugMessages() {
-	clients.mu.Lock()
-	defer clients.mu.Unlock()
+	debugclients.mu.Lock()
+	defer debugclients.mu.Unlock()
 
 	ticker := time.NewTicker(pongPeriod)
 	defer ticker.Stop()
@@ -162,7 +162,7 @@ func handleDebugMessages() {
 				}
 			}
 		case <-ticker.C:
-			for client := range clients.c {
+			for client := range debugclients.c {
 				client.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := client.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 					log.Println("Websocket ping error")

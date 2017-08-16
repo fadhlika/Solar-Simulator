@@ -248,10 +248,11 @@ $(document).ready(function(){
     var wsuri = "ws://" + ipaddr  + "/ws"
     sock = new WebSocket(wsuri);
     sock.onopen = function() {
+	//sock.send("ping");
         console.log("connected to " + wsuri);
     }
     sock.onclose = function(e) {
-        console.log("connection closed (" + e.code + ")");
+        console.log("connection data closed (" + e.code + ")");
     }
     sock.onmessage = function(e) {
         console.log(e.data)
@@ -288,16 +289,24 @@ $(document).ready(function(){
     var wsurid = "ws://" + ipaddr  + "/wsd"
     sockd = new WebSocket(wsurid);
     sockd.onopen = function() {
+	//sockd.send("ping");
         console.log("connected to " + wsurid);
     }
     sockd.onclose = function(e) {
-        console.log("connection closed (" + e.code + ")");
+        console.log("connection debug closed (" + e.code + ")");
     }
     sockd.onmessage = function(e) {       
         console.log(e.data);
         var msg = JSON.parse(e.data);
         updateDebugData(msg);
     }
+
+  // setInterval(function(){ 
+	//sock.send("ping");
+	//sockd.send("ping");
+	//console.log("ping");
+//   },30000);
+
     $.getJSON('debug', function(data) {
         updateDebugData(data);
     })
