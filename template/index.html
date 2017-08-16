@@ -1,15 +1,8 @@
 {{template "head"}}
 <body>
     {{template "topbar" }}
-    <div id="confirm-overlay" onclick="cancelDelete()">
-        <div id="confirm-dialog">
-            <span id="confirm-text">Are you sure to delete all data?</span>
-            <div class="button-bar">
-                <button onclick="confirmDelete()">Yes</button>
-                <button onclick="cancelDelete()">Cancel</button>
-            </div>
-        </div>
-    </div>
+    {{template "notification"}}
+    {{template "confirm-dialog"}}
     <main id="main">
         <div class="chart-row">
             <div class="chart"><canvas id="tempChart"></canvas></div>
@@ -77,4 +70,165 @@
             </table>
         </div>
     </main>
+    <script>
+         var tempChart = new Chart(document.getElementById("tempChart"), {
+        type: 'line',
+        data: {
+            datasets: [{
+                pointRadius: 0,
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
+                label: 'Temperature1',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Temp1 }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            },
+            {
+                pointRadius: 0,
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
+                label: 'Temperature2',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Temp2 }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'hour'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    var lumChart = new Chart(document.getElementById("lumChart"), {
+        type: 'line',
+        data: {
+            datasets: [{
+                pointRadius: 0,
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
+                label: 'Luminance1',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Lum1 }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            },
+            {
+                pointRadius: 0,
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
+                label: 'Luminance2',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Lum2 }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'hour'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    var voltageChart = new Chart(document.getElementById("voltageChart"), {
+        type: 'line',
+        data: {
+            datasets: [{
+                pointRadius: 0,
+                backgroundColor: 'rgb(153, 153, 153)',
+                borderColor: 'rgb(153, 153, 153)',
+                label: 'Voltage',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Voltage }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            },
+            {
+                pointRadius: 0,
+                backgroundColor: 'rgb(58, 58, 58)',
+                borderColor: 'rgb(58, 58, 58)',
+                label: 'Current',
+                data: [
+                {{ $data := .data }}
+                {{ range $k, $v := .keys }}
+                        {
+                            x: {{ (index $data $v).Created }},
+                            y: {{ (index $data $v).Current }}
+                        }, 
+                {{ end }}
+                ],
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'hour'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    </script>
 </body>

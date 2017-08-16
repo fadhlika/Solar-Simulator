@@ -5,6 +5,22 @@ html, body {
     width: 99%;
 }
 
+.notification {
+    display: none;
+    background: white;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    box-shadow: 0px 0px 10px 2px lightgray;
+    margin: 5px;
+    width: 300px;
+    height: 100px;
+    z-index: 99999;
+    top: 40px;
+    right: 0px;
+    position: absolute;
+    padding-left: 14px;
+}
+
 div#confirm-overlay {
     display: none;
     background-color: rgba(10, 10, 10, .5);
@@ -66,7 +82,12 @@ span#icon-label {
     justify-content: flex-end;
 }
 
-.icon a span {
+.title {
+    position: relative;
+    width: 150px;
+}
+
+.icon a span, .title a span {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -111,7 +132,7 @@ span#icon-label {
     flex-direction: column;
     justify-content: space-between;
     margin: 5px;
-    width: 30%;
+    min-width: 525px;
 }
 
 .chart {
@@ -126,7 +147,7 @@ span#icon-label {
     flex-grow: 2;
     border: 1px solid lightgray;
     border-radius: 2px;
-    box-shadow: 2px 2px 2px lightgray;
+    box-shadow: 0px 0px 10px 2px lightgray;
     overflow-y: auto;
     margin: 5px;
 }
@@ -140,7 +161,7 @@ span#icon-label {
 }
 
 .data-container#debug {
-    flex-grow: 1;
+    display: none;
 }
 
 .data-table {
@@ -152,10 +173,6 @@ td, th {
     text-align: center;
     padding: 8px;
     border-bottom: 1px solid #dddddd;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
 }
 
 .login-container {
