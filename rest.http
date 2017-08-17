@@ -4,7 +4,7 @@ POST http://128.199.162.40/data
 ###
 POST http://128.199.162.40/debug
 
-coba deui
+Hello
 ###
 GET http://128.199.162.40/data
 ####

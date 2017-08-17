@@ -49,8 +49,8 @@ var measure = false
 
 type m map[string]interface{}
 
-func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data interface{}) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", m{"keys": keys, "data": data})
+func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data interface{}, debugkeys []int, debug interface{}) {
+	err := templates.ExecuteTemplate(w, tmpl+".html", m{"keys": keys, "data": data, "debugkeys": debugkeys, "debug": debug})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,8 +69,20 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	for k := range datas {
 		keys = append(keys, k)
 	}
+
+	debugdatas, err := QueryDebug()
+	if err != nil {
+		log.Printf("Error query debug %v\n", err.Error())
+		return
+	}
+
+	var debugkeys []int
+	for k := range debugdatas {
+		debugkeys = append(debugkeys, k)
+	}
+
 	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
-	renderTemplate(w, "index", keys, datas)
+	renderTemplate(w, "index", keys, datas, debugkeys, debugdatas)
 }
 
 func awsHandler(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +97,7 @@ func awsHandler(w http.ResponseWriter, r *http.Request) {
 		keys = append(keys, k)
 	}
 	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
-	renderTemplate(w, "aws", keys, datas)
+	renderTemplate(w, "aws", keys, datas, nil, nil)
 }
 
 func dataAwsHandler(w http.ResponseWriter, r *http.Request) {
