@@ -29,15 +29,15 @@ func scrapAws() {
 		if i > 3 && i < 21 {
 			name, _ := s.Attr("name")
 			value, _ := s.Attr("value")
-			if name == "inTemp" && value == "0.0" {
+			if name == "inTemp" && value == "0" {
 				shouldUpdate = false
 				log.Panicln("Scrap data error")
 			}
 			units[name], _ = strconv.ParseFloat(value, 64)
 		}
 	})
-	if shouldUpdate == true {
-		data := awsdata{
+	if shouldUpdate {
+		data := Awsdata{
 			0, time.Now(),
 			units["inTemp"], units["inHumi"], units["AbsPress"], units["RelPress"],
 			units["outTemp"], units["outHumi"], units["windir"], units["avgwind"],
@@ -46,6 +46,9 @@ func scrapAws() {
 			units["rainofmonthly"], units["rainofyearly"],
 			false,
 		}
-		dbAwsInsert(data)
+		if err := data.save(); err != nil {
+			log.Printf("error save aws data %v\n", err.Error())
+			return
+		}
 	}
 }

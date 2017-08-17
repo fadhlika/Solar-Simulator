@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+	"time"
 
 	"fmt"
 
@@ -40,16 +41,16 @@ var upgrader = websocket.Upgrader{
 var clients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{}}
 var debugclients = Clients{make(map[*websocket.Conn]bool), sync.Mutex{}}
 
-var broadcast = make(chan solardata)
+var broadcast = make(chan Solardata)
 var debugchannel = make(chan []byte)
 
 var db *sql.DB
 var measure = false
 
-type M map[string]interface{}
+type m map[string]interface{}
 
 func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data interface{}) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", M{"keys": keys, "data": data})
+	err := templates.ExecuteTemplate(w, tmpl+".html", m{"keys": keys, "data": data})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,7 +59,12 @@ func renderTemplate(w http.ResponseWriter, tmpl string, keys []int, data interfa
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	datas := dbQuery("select * from solar_data where deleted=0 order by created desc")
+	datas, err := QuerySolarData()
+	if err != nil {
+		log.Printf("Error query solar data %v\n", err.Error())
+		return
+	}
+
 	var keys []int
 	for k := range datas {
 		keys = append(keys, k)
@@ -68,7 +74,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func awsHandler(w http.ResponseWriter, r *http.Request) {
-	datas := dbAwsQuery("select * from aws_data where deleted=0 order by created desc")
+	datas, err := QueryAwsData()
+	if err != nil {
+		log.Printf("Error query solar debug %v\n", err.Error())
+		return
+	}
+
 	var keys []int
 	for k := range datas {
 		keys = append(keys, k)
@@ -80,74 +91,86 @@ func awsHandler(w http.ResponseWriter, r *http.Request) {
 func dataAwsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		datas := dbAwsQuery("select * from solar_data where deleted=0 order by created desc")
+		datas, err := QueryAwsData()
+		if err != nil {
+			log.Printf("Error query aws data %v\n", err.Error())
+			return
+		}
 		json.NewEncoder(w).Encode(datas)
 	case "POST":
 		b, err := ioutil.ReadAll(r.Body)
 		checkErr(err)
 
-		var s awsdata
+		var s Awsdata
 		err = json.Unmarshal(b, &s)
-		checkErr(err)
-
-		dbAwsInsert(s)
+		if err != nil {
+			log.Printf("Error unmarshal data %v\n", err.Error())
+			return
+		}
+		s.save()
 	}
 }
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		getHandler(w)
+		datas, err := QuerySolarData()
+		if err != nil {
+			log.Printf("Error query solar data %v\n", err.Error())
+			return
+		}
+		json.NewEncoder(w).Encode(datas)
 	case "POST":
-		postHandler(w, r)
+		log.Println(r.Body)
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Printf("post error: %v\n", err.Error())
+			return
+		}
+
+		var s Solardata
+		err = json.Unmarshal(b, &s)
+		if err != nil {
+			log.Printf("Json unmarsal error: %v\n", err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		s.Created = time.Now()
+		s.save()
+		SendWS(s)
 	case "PUT":
 
 	case "DELETE":
-		dbDeleteAll()
+		DeleteAll()
 	}
-}
-
-func getHandler(w http.ResponseWriter) {
-	datas := dbQuery("select * from solar_data where deleted=0 order by created desc")
-	json.NewEncoder(w).Encode(datas)
-}
-
-func postHandler(w http.ResponseWriter, r *http.Request) {
-	//Get json data from POST request body and decode to solardata struct
-	log.Println(r.Body)
-	b, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Printf("post error: %v\n", err.Error())
-		return
-	}
-
-	var s solardata
-	err = json.Unmarshal(b, &s)
-	if err != nil {
-		log.Printf("Json unmarsal error: %v\n", err.Error())
-		return
-	}
-
-	data := dbInsert(s)
-	sendWS(data)
 }
 
 func debugHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		datas := dbDebugQuery("select * from solar_debug order by created desc")
+		datas, err := QueryDebug()
+		if err != nil {
+			log.Printf("Error query debug %v\n", err.Error())
+			return
+		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(datas)
+		break
 	case "POST":
 		//Get json data from POST request body and decode to solardata struct
 		b, err := ioutil.ReadAll(r.Body)
-		checkErr(err)
+		if err != nil {
+			log.Printf("Error qread post body %v\n", err.Error())
+			return
+		}
 
-		data := dbDebugInsert(string(b))
-		sendDebugWS(data)
-	case "PUT":
-
-	case "DELETE":
+		var s = Solardebug{
+			Created: time.Now(), Message: string(b),
+		}
+		s.save()
+		SendDebugWS(s)
+		break
 	}
 }
 
@@ -176,7 +199,11 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 	xlsx.SetCellValue("Sheet1", "F1", "Lum1")
 	xlsx.SetCellValue("Sheet1", "G1", "Lum2")
 
-	datas := dbQuery("select * from solar_data where deleted=0 order by id DESC")
+	datas, err := QuerySolarData()
+	if err != nil {
+		log.Printf("Error query solar data %v\n", err.Error())
+		return
+	}
 
 	var keys []int
 	for k := range datas {
@@ -233,7 +260,11 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 	xlsx.SetCellValue("Sheet2", "M1", "MonthlyRain")
 	xlsx.SetCellValue("Sheet2", "N1", "YearlyRain")
 
-	awsdatas := dbAwsQuery("select * from aws_data where deleted=0 order by id DESC")
+	awsdatas, err := QueryAwsData()
+	if err != nil {
+		log.Printf("Error query solar data %v\n", err.Error())
+		return
+	}
 
 	for k := range awsdatas {
 		keys = append(keys, k)
@@ -264,8 +295,11 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 		i++
 	}
 
-	err := xlsx.SaveAs("./Solar-Simulator-Exported.xlsx")
-	checkErr(err)
+	err = xlsx.SaveAs("./Solar-Simulator-Exported.xlsx")
+	if err != nil {
+		log.Printf("Error save export file %v\n", err.Error())
+		return
+	}
 
 	info, _ := os.Stat("./Solar-Simulator-Exported.xlsx")
 	fmt.Printf("excel saved, size: %d bytes\r\n", info.Size())

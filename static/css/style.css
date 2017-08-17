@@ -2,7 +2,7 @@ html, body {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     height: 95%;
-    width: 99%;
+    width: 99.8%;
 }
 
 .notification {
@@ -17,7 +17,7 @@ html, body {
     z-index: 99999;
     top: 40px;
     right: 0px;
-    position: absolute;
+    position: fixed;
     padding-left: 14px;
 }
 

@@ -37,7 +37,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	})
 	clients.c[ws] = true
 	for {
-		var data solardata
+		var data Solardata
 		err := ws.ReadJSON(&data)
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
@@ -173,7 +173,8 @@ func handleDebugMessages() {
 	}
 }
 
-func dialWs() *websocket.Conn {
+// DialWs dial websocket for solar data
+func DialWs() *websocket.Conn {
 	conn, _, err := websocket.DefaultDialer.Dial("ws://"+url+"/ws", nil)
 	if err != nil {
 		log.Println("write: ", err)
@@ -181,7 +182,8 @@ func dialWs() *websocket.Conn {
 	return conn
 }
 
-func dialDebugWs() *websocket.Conn {
+// DialDebugWs dial websocket for debug
+func DialDebugWs() *websocket.Conn {
 	conn, _, err := websocket.DefaultDialer.Dial("ws://"+url+"/wsd", nil)
 	if err != nil {
 		log.Println("write: ", err)
@@ -189,16 +191,18 @@ func dialDebugWs() *websocket.Conn {
 	return conn
 }
 
-func sendWS(s solardata) {
-	conn := dialWs()
+// SendWS send solar data
+func SendWS(s Solardata) {
+	conn := DialWs()
 	err := conn.WriteJSON(s)
 	if err != nil {
 		log.Println("write: ", err)
 	}
 }
 
-func sendDebugWS(s solardebug) {
-	conn := dialDebugWs()
+// SendDebugWS send debug data
+func SendDebugWS(s Solardebug) {
+	conn := DialDebugWs()
 	err := conn.WriteJSON(s)
 	if err != nil {
 		log.Println("write: ", err)
