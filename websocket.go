@@ -16,7 +16,7 @@ const (
 	pongPeriod = (pongWait * 9) / 10
 )
 
-var url string = "128.199.162.40"
+var url string = "128.199.227.5"
 
 type Clients struct {
 	c  map[*websocket.Conn]bool

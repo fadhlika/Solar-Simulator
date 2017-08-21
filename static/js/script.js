@@ -1,5 +1,5 @@
 $(document).ready(function(){    
-    var ipaddr = "128.199.162.40"
+    var ipaddr = "128.199.227.5"
     
     var sock = null;
     var wsuri = "ws://" + ipaddr  + "/ws"
