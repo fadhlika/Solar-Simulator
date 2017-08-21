@@ -357,7 +357,7 @@ func main() {
 	go periodScrap()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
-	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/home", indexHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/data", dataHandler)
 	http.HandleFunc("/data/aws", dataAwsHandler)

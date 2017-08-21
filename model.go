@@ -312,5 +312,6 @@ func DeleteAll() error {
 		return err
 	}
 
+	log.Println("Solar data deleted")
 	return nil
 }
