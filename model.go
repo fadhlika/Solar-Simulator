@@ -13,6 +13,7 @@ type Solardata struct {
 	Temp2   float64   `json:"temp2"`
 	Lum1    float64   `json:"lum1"`
 	Lum2    float64   `json:"lum2"`
+	PWM		float64	  `json:"pwm"`
 	Deleted bool      `json:"deleted"`
 }
 
@@ -106,14 +107,15 @@ func QuerySolarData() (map[int]Solardata, error) {
 		var Temperature2 float64
 		var LightIntensity1 float64
 		var LightIntensity2 float64
+		var PWM float64
 		var Deleted bool
-		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2, &Deleted)
+		err = rows.Scan(&id, &Date, &Voltage, &Current, &Temperature1, &Temperature2, &LightIntensity1, &LightIntensity2, &PWM, &Deleted)
 		if err != nil {
 			log.Printf("Query scan err %v \n", err.Error())
 			return nil, err
 		}
 		datas[id] = Solardata{
-			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2, Deleted,
+			id, Date, Voltage, Current, Temperature1, Temperature2, LightIntensity1, LightIntensity2, PWM, Deleted,
 		}
 	}
 	err = rows.Err()
@@ -131,13 +133,13 @@ func (d Solardata) save() error {
 		return err
 	}
 
-	stmt, err := db.Prepare("insert into solar_data(created, voltage, current, temp1, temp2, lum1, lum2) values(?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("insert into solar_data(created, voltage, current, temp1, temp2, lum1, lum2, pwm) values(?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Printf("Error prepare statement %v\n", err.Error())
 		return err
 	}
 
-	res, err := tx.Stmt(stmt).Exec(d.Created, d.Voltage, d.Current, d.Temp1, d.Temp2, d.Lum1, d.Lum2)
+	res, err := tx.Stmt(stmt).Exec(d.Created, d.Voltage, d.Current, d.Temp1, d.Temp2, d.Lum1, d.Lum2, d.PWM)
 	if err != nil {
 		log.Printf("Error execute statement %v\n", err.Error())
 		return err

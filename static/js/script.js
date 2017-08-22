@@ -109,6 +109,10 @@ $(document).ready(function(){
         lumChart.update();
         var l2Cell = row.insertCell(6);
         l2Cell.innerHTML = lum2;
+
+        var pwm = data.pwm;
+        var pwmCell = row.insertCell(7);
+        pwmCell.innerHTML = pwm;
     }
     
     var debugtable = document.getElementById("solardebug-table");

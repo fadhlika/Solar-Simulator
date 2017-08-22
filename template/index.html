@@ -40,6 +40,10 @@
                         <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
                         <span>Lum 2</span>
                     </th>
+                    <th>
+                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        <span>PWM</span>
+                    </th>
                 </tr>
                 {{ $data := .data }}
                 {{ range $k, $v := .keys }}
@@ -51,6 +55,7 @@
                         <td>{{ (index $data $v).Temp2 }}</td>
                         <td>{{ (index $data $v).Lum1 }}</td>
                         <td>{{ (index $data $v).Lum2 }}</td>
+                        <td>{{ (index $data $v).PWM }}</td>
                     </tr>
                 {{ end }}
             </table>
