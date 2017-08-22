@@ -2,7 +2,7 @@ html, body {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     height: 95%;
-    width: 99.8%;
+    width: 99%;
 }
 
 .notification {
@@ -132,7 +132,7 @@ span#icon-label {
     flex-direction: column;
     justify-content: space-between;
     margin: 5px;
-    min-width: 525px;
+    height: 100%;
 }
 
 .chart {
