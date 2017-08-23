@@ -258,7 +258,7 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 	xlsx.SetCellValue("Sheet2", "C1", "IndoorHumid")
 	xlsx.SetCellValue("Sheet2", "D1", "AbsolutePressure")
 	xlsx.SetCellValue("Sheet2", "E1", "RelativePressure")
-	xlsx.SetCellValue("Sheet2", "F1", "OutdoorHumid")
+	xlsx.SetCellValue("Sheet2", "F1", "OutdoorTemp")
 	xlsx.SetCellValue("Sheet2", "G1", "OutdoorHumid")
 	xlsx.SetCellValue("Sheet2", "H1", "WindDirection")
 	xlsx.SetCellValue("Sheet2", "I1", "WindSpeed")
