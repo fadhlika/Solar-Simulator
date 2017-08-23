@@ -160,20 +160,6 @@ td, th {
     border-bottom: 1px solid #dddddd;
 }
 
-.login-container {
-    margin: auto auto;
-    width: 400px;
-    height: 500px
-}
-
-.login {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 100%;
-    width: 350px;
-    margin: auto;
-}
 
 label {
     font-size: 20px;
