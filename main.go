@@ -267,10 +267,10 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 	xlsx.SetCellValue("Sheet2", "L1", "UV")
 	xlsx.SetCellValue("Sheet2", "M1", "UVI")
 	xlsx.SetCellValue("Sheet2", "N1", "HourlyRain")
-	xlsx.SetCellValue("Sheet2", "K1", "DailyRain")
-	xlsx.SetCellValue("Sheet2", "L1", "WeeklyRain")
-	xlsx.SetCellValue("Sheet2", "M1", "MonthlyRain")
-	xlsx.SetCellValue("Sheet2", "N1", "YearlyRain")
+	xlsx.SetCellValue("Sheet2", "O1", "DailyRain")
+	xlsx.SetCellValue("Sheet2", "P1", "WeeklyRain")
+	xlsx.SetCellValue("Sheet2", "Q1", "MonthlyRain")
+	xlsx.SetCellValue("Sheet2", "R1", "YearlyRain")
 
 	awsdatas, err := QueryAwsData()
 	if err != nil {
