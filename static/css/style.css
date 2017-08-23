@@ -127,21 +127,6 @@ span#icon-label {
     padding: 3px;
 }
 
-.chart-row {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 5px;
-    height: 100%;
-}
-
-.chart {
-    background: white;
-    border: 1px solid lightgray;
-    border-radius: 2px;
-    box-shadow: 2px 2px 2px lightgray;
-}
-
 .data-container, .login-container {
     background: white;
     flex-grow: 2;
