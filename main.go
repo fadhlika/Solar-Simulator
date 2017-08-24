@@ -24,8 +24,6 @@ import (
 
 var templates = template.Must(template.ParseFiles(
 	"template/head.html",
-	"template/notification.html",
-	"template/confirm-dialog.html",
 	"template/topbar.html",
 	"template/index.html",
 	"template/aws.html"))
@@ -151,10 +149,6 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 		s.Created = time.Now()
 		s.save()
 		SendWS(s)
-	case "PUT":
-
-	case "DELETE":
-		DeleteAll()
 	}
 }
 

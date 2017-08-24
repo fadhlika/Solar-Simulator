@@ -290,30 +290,3 @@ func (s Awsdata) save() error {
 	}
 	return err
 }
-
-// DeleteAll change deleted field to true and return error
-func DeleteAll() error {
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	stmt, err := db.Prepare("update solar_data set deleted=?")
-	if err != nil {
-		log.Printf("Error prepare staement %v \n", err.Error())
-		return err
-	}
-
-	_, err = tx.Stmt(stmt).Exec(true)
-	if err != nil {
-		log.Printf("Error execute statement %v \n", err.Error())
-		return err
-	}
-	if err := tx.Commit(); err != nil {
-		log.Printf("Error commit statement %v \n", err.Error())
-		return err
-	}
-
-	log.Println("Solar data deleted")
-	return nil
-}

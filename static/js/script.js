@@ -1,5 +1,14 @@
-$(document).ready(function(){    
-    var ipaddr = "128.199.227.5"
+$(document).ready(function(){
+    if(window.Notification && Notification.permission !== "granted"){
+        Notification.requestPermission(function (status) {
+            if(Notification.permission !== status) {
+                Notification.permission = status;
+            }
+        })
+    }
+
+    //var ipaddr = "128.199.227.5"
+    var ipaddr = "127.0.0.1:8000"
     
     var sock = null;
     var wsuri = "ws://" + ipaddr  + "/ws"
@@ -11,9 +20,15 @@ $(document).ready(function(){
 
     sock.onopen = function() {
 	//sock.send("ping");
+        if (window.Notification && Notification.permission === "granted") {
+            var n = new Notification("Solar Simulator: Ready", {tag: 'Debug'});
+        }
         console.log("connected to " + wsuri);
     }
     sock.onclose = function(e) {
+        if (window.Notification && Notification.permission === "granted") {
+            var n = new Notification("Solar Simulator: Ready", {tag: 'Debug'});
+        }
         console.log("connection data closed (" + e.code + ")");
     }
     sock.onmessage = function(e) {
@@ -24,16 +39,24 @@ $(document).ready(function(){
     
     sockd.onopen = function() {
 	//sockd.send("ping");
+        if (window.Notification && Notification.permission === "granted") {
+            var n = new Notification("Solar Simulator", {tag: 'Debug'});
+        }
         console.log("connected to " + wsurid);
     }
     sockd.onclose = function(e) {
+        if (window.Notification && Notification.permission === "granted") {
+            var n = new Notification("Solar Simulator", {tag: 'Debug'});
+        }
         console.log("connection debug closed (" + e.code + ")");
     }
     sockd.onmessage = function(e) {       
         console.log(e.data);
         var msg = JSON.parse(e.data);
         updateDebugData(msg);
-        notify("Debug", msg.Message);
+        if (window.Notification && Notification.permission === "granted") {
+            var n = new Notification("Debug: " + msg.Message, {tag: 'Debug'});
+        }
     }
 
     var table = document.getElementById("solardata-table");
@@ -92,9 +115,29 @@ $(document).ready(function(){
     var debugtable = document.getElementById("solardebug-table");
     function updateDebugData(data) {
         var row = debugtable.insertRow(1);
-        var c = new Date(data.Created)
+        var c = new Date();
+        var month = c.getMonth() + 1;
+        if(month < 10) {
+            month = "0" + month;
+        }
+        var date = c.getDate();
+        if(date < 10) {
+            date = "0" + date;
+        }
+        var hour = c.getHours();
+        if (hour < 10) {
+            hour = "0" + hour;
+        }
+        var min = c.getMinutes();
+        if (min < 10) {
+            min = "0" + min;
+        }
+        var sec = c.getSeconds();
+        if(sec < 10) {
+            sec = "0" + sec;
+        }
         var cCell = row.insertCell(0);
-        cCell.innerHTML = c.toLocaleString();
+        cCell.innerHTML = c.getFullYear() + "-" + month + "-" + date +" " + hour + ":" + min + ":" + sec;
         
         var message = data.Message;
         var mCell = row.insertCell(1);
@@ -111,28 +154,6 @@ $(document).ready(function(){
             }
         })
     });
-    
-    $("#delete").click(function () {
-        $("#confirm-overlay").css("display", "block");
-        console.log("delete data");
-    });
-
-    $("#delete-confirm").click(function () {
-        $.ajax({
-            url: '/data',
-            type: 'DELETE',
-            success: function(result){
-                console.log(result);
-                window.location.reload();
-            }
-        });
-        console.log("detele confirm");
-    });
-
-    $("#delete-cancel").click(function () {
-        $("#confirm-overlay").css("display", "none");
-        console.log("detele cancel");
-    });
 
     $("#debug-list").click(function(){
         if($("#debug").css("display") == "none") {
@@ -142,14 +163,4 @@ $(document).ready(function(){
         }        
         console.log("show debug");
     })
-
-    function notify(title, content) {
-        $("#notification-title").text(title);
-        $("#notification-content").text(content);
-        $(".notification").css("display", "block");
-        setTimeout(function(){
-            $(".notification").css("display", "none");
-        }, 5000);
-        console.log("notify");
-    }
 });
