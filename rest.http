@@ -15,8 +15,6 @@ POST http://127.0.0.1:8000/data
 ###
 POST http://127.0.0.1:8000/debug
 
-test notif
-###
-DELETE http://127.0.0.1:8000/data
+coba deui
 ###
 GET http://127.0.0.1:8000/data
