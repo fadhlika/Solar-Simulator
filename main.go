@@ -148,6 +148,8 @@ func dataHandler(w http.ResponseWriter, r *http.Request) {
 
 		s.Created = time.Now()
 		s.save()
+		scrapAws()
+
 		SendWS(s)
 	}
 }
@@ -348,7 +350,7 @@ func main() {
 	go handleMessages()
 	go handleDebugMessages()
 
-	go periodScrap()
+	scrapAws()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/home", indexHandler)
