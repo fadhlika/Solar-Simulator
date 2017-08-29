@@ -10,14 +10,15 @@ import (
 
 func scrapAws() {
 	shouldTryAgain := true
-	doc, err := goquery.NewDocument("https://www.elka.fi.itb.ac.id/aws")
-	if err != nil {
-		log.Println("Error goquery")
-		return
-	}
 
 	units := make(map[string]float64)
 	for shouldTryAgain == true {
+		doc, err := goquery.NewDocument("https://www.elka.fi.itb.ac.id/aws")
+		if err != nil {
+			log.Println("Error goquery")
+			return
+		}
+
 		doc.Find("input").Each(func(i int, s *goquery.Selection) {
 			if i > 3 && i < 21 {
 				name, _ := s.Attr("name")
