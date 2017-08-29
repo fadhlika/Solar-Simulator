@@ -274,13 +274,14 @@ func exportHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var awskeys []int
 	for k := range awsdatas {
-		keys = append(keys, k)
+		awskeys = append(awskeys, k)
 	}
-	sort.Ints(keys)
+	sort.Ints(awskeys)
 
 	i = 2
-	for _, k := range keys {
+	for _, k := range awskeys {
 		fmt.Println("data: ", awsdatas[k])
 		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "A", i), awsdatas[k].Created.Format("2006-01-02 15:04:05"))
 		xlsx.SetCellValue("Sheet2", fmt.Sprintf("%s%d", "B", i), awsdatas[k].IndoorTemp)
@@ -349,8 +350,6 @@ func main() {
 	log.Println("Starting websocket message handler")
 	go handleMessages()
 	go handleDebugMessages()
-
-	scrapAws()
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/home", indexHandler)

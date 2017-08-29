@@ -23,15 +23,19 @@ func scrapAws() {
 				name, _ := s.Attr("name")
 				value, _ := s.Attr("value")
 				if name == "inTemp" && value != "0.0" {
+					log.Println("Scrap sucess")
 					shouldTryAgain = false
+					units[name], _ = strconv.ParseFloat(value, 64)
 				} else if name == "inTemp" && value == "0.0" {
 					log.Println("Scrap data error")
 					return
 				}
-				units[name], _ = strconv.ParseFloat(value, 64)
 			}
 		})
-		time.Sleep(15 * time.Second)
+		if shouldTryAgain {
+			time.Sleep(15 * time.Second)
+			log.Println("Try scrap again")
+		}
 	}
 
 	data := Awsdata{
