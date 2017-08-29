@@ -22,15 +22,16 @@ func scrapAws() {
 			if i > 3 && i < 21 {
 				name, _ := s.Attr("name")
 				value, _ := s.Attr("value")
-				if name == "inTemp" && value != "0.00" {
+				if name == "inTemp" && value != "0.0" {
 					shouldTryAgain = false
-				} else if name == "inTemp" && value == "0.00" {
+				} else if name == "inTemp" && value == "0.0" {
 					log.Println("Scrap data error")
 					return
 				}
 				units[name], _ = strconv.ParseFloat(value, 64)
 			}
 		})
+		time.Sleep(15 * time.Second)
 	}
 
 	data := Awsdata{
